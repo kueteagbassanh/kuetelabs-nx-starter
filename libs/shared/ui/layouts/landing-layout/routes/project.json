@@ -1,0 +1,13 @@
+{
+  "name": "landing-layout-routes",
+  "$schema": "../../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/ui/layouts/landing-layout/routes/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": ["domain:layout", "type:routes"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

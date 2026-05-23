@@ -1,0 +1,33 @@
+{
+  "name": "checkbox",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/ui/spartan/checkbox/src",
+  "prefix": "hlm",
+  "projectType": "library",
+  "tags": [
+    "domain:spartan",
+    "type:ui"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": [
+        "{workspaceRoot}/dist/{projectRoot}"
+      ],
+      "options": {
+        "project": "libs/shared/ui/spartan/checkbox/ng-package.json",
+        "tsConfig": "libs/shared/ui/spartan/checkbox/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/shared/ui/spartan/checkbox/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

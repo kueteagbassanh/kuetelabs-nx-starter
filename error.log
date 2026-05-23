@@ -1,0 +1,5 @@
+
+fatal: detected dubious ownership in repository at '/mnt/Store/Project/kuetelabs/kuetelabs-nx-starter'
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory /mnt/Store/Project/kuetelabs/kuetelabs-nx-starter
