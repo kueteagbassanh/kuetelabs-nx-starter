@@ -74,6 +74,31 @@ export interface Database {
         };
         Relationships: [];
       };
+      notifications: {
+        Row: {
+          id: number;
+          user_id: string;
+          type: Database['public']['Enums']['notification_type'];
+          title: string;
+          body: string | null;
+          action_url: string | null;
+          metadata: Json;
+          read_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          type: Database['public']['Enums']['notification_type'];
+          title: string;
+          body?: string | null;
+          action_url?: string | null;
+          metadata?: Json;
+        };
+        Update: {
+          read_at?: string | null;
+        };
+        Relationships: [];
+      };
       role_audit_log: {
         Row: {
           id: number;
@@ -104,6 +129,13 @@ export interface Database {
     };
     Enums: {
       app_role: 'admin' | 'manager' | 'support' | 'member';
+      notification_type:
+        | 'role.granted'
+        | 'role.revoked'
+        | 'user.invited'
+        | 'user.disabled'
+        | 'user.enabled'
+        | 'system';
       app_permission:
         | 'users.read'
         | 'users.invite'

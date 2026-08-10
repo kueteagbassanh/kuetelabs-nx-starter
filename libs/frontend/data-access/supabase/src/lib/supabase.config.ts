@@ -7,3 +7,14 @@ export interface SupabaseConfig {
 }
 
 export const SUPABASE_CONFIG = new InjectionToken<SupabaseConfig>('SUPABASE_CONFIG');
+
+/**
+ * Whether Supabase credentials are present.
+ *
+ * Lets an app skip mounting features that need a backend, so a freshly cloned
+ * starter still runs before anyone pastes an anon key. Injecting SUPABASE_CLIENT
+ * without configuration throws by design — this is how callers avoid doing so.
+ */
+export function isSupabaseConfigured(config: SupabaseConfig | null | undefined): boolean {
+  return Boolean(config?.url && config?.anonKey);
+}

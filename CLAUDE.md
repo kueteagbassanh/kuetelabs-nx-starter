@@ -88,6 +88,15 @@ Component conventions (see `libs/frontend/ui/components/button`):
 - **`rxMethod` for anything with RxJS semantics** — debounce, cancellation, retry. The user search uses `debounceTime` + `distinctUntilChanged` + `switchMap`, so typing issues one request and a slow earlier response cannot overwrite a newer one. Keep `catchError` *inside* `switchMap` or the outer stream dies on the first failure.
 - Mutate only through `patchState`; never assign to a state signal directly.
 
+## Notifications
+
+In-app center + toasts. `notifications` has no client insert policy — the API writes rows with the service_role key from the same hooks that audit RBAC changes (`libs/backend/notification`). Reads and mark-as-read go straight to Supabase under RLS; delivery is a Realtime subscription in `NotificationsStore`.
+
+- Toasts go through `ToastService` (`@kuetelabs/frontend/ui/toast`), never `toast` from sonner directly. Requires `<hlm-toaster />` in the app shell.
+- The store is `type:data-access` and cannot import a UI lib, so it exposes `lastArrival` and `NotificationBell` (feature layer) raises the toast.
+- The bell mounts via `DASHBOARD_HEADER_ACTIONS`, so the shared layout stays free of feature deps.
+- **Anything that touches Supabase at construction must be gated on `isSupabaseConfigured(...)`** — see `apps/admin/src/app/app.config.ts`. Mounting the bell without an anon key takes the whole shell down.
+
 ## Auth, roles, permissions
 
 Global roles; permissions ride in the JWT (stamped by `custom_access_token_hook`); every mutation goes through the API with the service_role key. Full model in `docs/ARCHITECTURE.md` §7b — read it before touching a policy or adding a permission.

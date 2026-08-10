@@ -493,6 +493,52 @@ rather than an error, so retries are safe.
 Roles are service_role-only, so the first admin cannot be granted through the app. `supabase/seed.sql`
 carries the SQL: insert the grant directly, then sign out and back in so the claim lands in the token.
 
+
+---
+
+## 7c. Notifications
+
+In-app notification center plus toasts. Producers are server-side; delivery is Supabase Realtime.
+
+```
+API (service_role) ──insert──► notifications ──Realtime (RLS-filtered)──► NotificationsStore
+   role granted / revoked                                                      │
+   user invited / disabled                                        bell badge ──┴── toast on arrival
+```
+
+**Why the API writes them.** `notifications` has no client insert policy, so a browser cannot
+notify another user — the same reasoning as `user_roles`. The user-management service calls
+`NotificationService.notify()` from the hooks that already audit each privilege change, so real
+events drive the feature rather than seeded rows.
+
+**Reads and marking read go straight to Supabase.** Both are the caller's own rows under RLS, so
+routing them through the API would add a hop and no safety. That is the Supabase-first rule from §2
+applied concretely: the API earns its place only where a secret or a cross-user concern exists.
+
+**A failed notification never fails its trigger.** `NotificationService` logs insert errors instead
+of throwing — losing a bell badge is not worth rolling back a role grant. There is a test for it.
+
+### Layering, and why the bell lives where it does
+
+`NotificationsStore` is `type:data-access` and may not depend on a UI lib, so it cannot raise a
+toast itself. It exposes `lastArrival`, and `NotificationBell` (`type:feature`) bridges that signal
+to `ToastService` (`libs/frontend/ui/toast`, `type:ui`). The boundary rules pushed the coupling to
+the right layer rather than blocking the feature.
+
+The bell reaches the dashboard header through `DASHBOARD_HEADER_ACTIONS`, an injection token the
+layout renders with `NgComponentOutlet`. A routed component has no parent template to project into,
+and hard-wiring the bell into the layout would force every app to have Supabase configured — `web`
+does not.
+
+### Degrading without configuration
+
+Mounting the bell subscribes to Realtime on construction, which throws when no anon key is set —
+that took the whole admin shell down until `apps/admin/src/app/app.config.ts` started gating
+Supabase-dependent features behind `isSupabaseConfigured(...)`. A freshly cloned starter boots and
+shows the demo dashboard; the bell, the Notifications nav entry, and the pages that need a backend
+appear once credentials exist. Follow that pattern for any future feature that needs a session at
+construction time.
+
 ## 8. Shared contracts and generated types
 
 ```sh
@@ -641,6 +687,7 @@ Ordered by leverage. Items 1–2 are done; the rest are open.
 | 9b | Regenerate the deleted `web-e2e` / `api-e2e` | open |
 | 15 | RBAC: schema, RLS, JWT hook, admin API, admin UI (§7b) | **done — unexecuted against a live database** |
 | 16 | Run `supabase start` + `db reset`, regenerate DB types, add pgTAP policy tests | open |
+| 17 | Notifications: table + RLS + Realtime, API producers, bell, toasts (§7c) | **done — unexecuted against a live database** |
 | 10 | Write `tools/generators/feature` to emit the §9 triad | open |
 | 11 | `npx nx g ci-workflow`; add RLS policy tests to CI | open |
 | 12 | Charts: `angular-chrts` installed, `--chart-*` tokens + Unovis bridge wired (§7a) | **done** |

@@ -220,6 +220,18 @@
       ],
       "@kuetelabs/backend/user-management": [
         "./libs/backend/user-management/feature/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/toast": [
+        "./libs/frontend/ui/toast/src/index.ts"
+      ],
+      "@kuetelabs/frontend/features/notification/data-access": [
+        "./libs/frontend/features/notification/data-access/src/index.ts"
+      ],
+      "@kuetelabs/frontend/features/notification/feature": [
+        "./libs/frontend/features/notification/feature/src/index.ts"
+      ],
+      "@kuetelabs/backend/notification": [
+        "./libs/backend/notification/feature/src/index.ts"
       ]
     }
   },

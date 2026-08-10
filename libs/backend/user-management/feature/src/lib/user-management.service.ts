@@ -12,6 +12,7 @@ import {
   APP_ROLES,
 } from '@kuetelabs/shared/domain';
 import { SupabaseAdminService } from '@kuetelabs/backend/supabase';
+import { NotificationService } from '@kuetelabs/backend/notification';
 
 /**
  * Privileged user administration.
@@ -22,7 +23,10 @@ import { SupabaseAdminService } from '@kuetelabs/backend/supabase';
  */
 @Injectable()
 export class UserManagementService {
-  constructor(private readonly supabase: SupabaseAdminService) {}
+  constructor(
+    private readonly supabase: SupabaseAdminService,
+    private readonly notifications: NotificationService,
+  ) {}
 
   async listUsers(query: ListUsersQuery): Promise<ManagedUserPage> {
     return this.supabase.withAdmin('listUsers', async (client) => {
@@ -98,6 +102,14 @@ export class UserManagementService {
 
       await this.audit(actorId, dto.userId, 'grant', dto.role);
     });
+
+    await this.notifications.notify({
+      userId: dto.userId,
+      type: 'role.granted',
+      title: `You were granted the ${dto.role} role`,
+      body: 'Sign out and back in if the new permissions are not visible yet — they travel in your access token.',
+      actionUrl: '/',
+    });
   }
 
   async revokeRole(actorId: string, dto: GrantRoleDto): Promise<void> {
@@ -121,6 +133,13 @@ export class UserManagementService {
 
       await this.audit(actorId, dto.userId, 'revoke', dto.role);
     });
+
+    await this.notifications.notify({
+      userId: dto.userId,
+      type: 'role.revoked',
+      title: `Your ${dto.role} role was removed`,
+      actionUrl: '/',
+    });
   }
 
   async inviteUser(actorId: string, dto: InviteUserDto): Promise<{ userId: string }> {
@@ -140,6 +159,15 @@ export class UserManagementService {
       }
 
       await this.audit(actorId, data.user.id, 'invite', null, { roles: dto.roles });
+
+      await this.notifications.notify({
+        userId: data.user.id,
+        type: 'user.invited',
+        title: 'Welcome — your account has been created',
+        body: dto.roles.length > 0 ? `You start with: ${dto.roles.join(', ')}.` : undefined,
+        actionUrl: '/',
+      });
+
       return { userId: data.user.id };
     });
   }
@@ -164,6 +192,15 @@ export class UserManagementService {
       }
 
       await this.audit(actorId, dto.userId, dto.disabled ? 'disable' : 'enable');
+    });
+
+    // A disabled user has been signed out globally, so this is waiting for them
+    // if the account is re-enabled.
+    await this.notifications.notify({
+      userId: dto.userId,
+      type: dto.disabled ? 'user.disabled' : 'user.enabled',
+      title: dto.disabled ? 'Your account was disabled' : 'Your account was re-enabled',
+      actionUrl: '/',
     });
   }
 

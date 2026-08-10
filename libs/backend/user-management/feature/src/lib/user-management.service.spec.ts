@@ -1,5 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import type { SupabaseAdminService } from '@kuetelabs/backend/supabase';
+import type { NotificationService } from '@kuetelabs/backend/notification';
+import type { CreateNotificationDto } from '@kuetelabs/shared/domain';
 import { UserManagementService } from './user-management.service';
 
 /** Postgrest builders are thenable and also expose maybeSingle(); this mimics both. */
@@ -35,7 +37,14 @@ function serviceWith(adminRows: { user_id: string }[]) {
     withAdmin: <T>(_operation: string, fn: (c: unknown) => Promise<T>) => fn(client),
   } as unknown as SupabaseAdminService;
 
-  return { service: new UserManagementService(supabase), inserts };
+  const notified: CreateNotificationDto[] = [];
+  const notifications = {
+    notify: async (dto: CreateNotificationDto) => {
+      notified.push(dto);
+    },
+  } as unknown as NotificationService;
+
+  return { service: new UserManagementService(supabase, notifications), inserts, notified };
 }
 
 describe('UserManagementService', () => {
@@ -91,6 +100,16 @@ describe('UserManagementService', () => {
       );
       expect(inserts).toContainEqual(
         expect.objectContaining({ table: 'role_audit_log', action: 'grant', role: 'manager' }),
+      );
+    });
+
+    it('notifies the user whose role changed', async () => {
+      const { service, notified } = serviceWith([]);
+
+      await service.grantRole('actor', { userId: 'subject', role: 'manager' });
+
+      expect(notified).toContainEqual(
+        expect.objectContaining({ userId: 'subject', type: 'role.granted' }),
       );
     });
   });
