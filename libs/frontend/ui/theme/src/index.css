@@ -1,0 +1,23 @@
+/* Shared design system entry point.
+ *
+ * Apps import this from their own entry stylesheet rather than repeating it:
+ *
+ *   @import '../../../libs/frontend/ui/theme/src/index.css';
+ *
+ * Import order matters: Tailwind layers and the spartan preset first, then the
+ * tokens they are parameterised by, then anything that consumes those tokens.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+@import '@spartan-ng/brain/hlm-tailwind-preset.css';
+
+/* Tailwind v4 auto-detects sources from every non-ignored file, markdown included —
+   documentation that mentions `bg-chart-1` was emitting real utilities. Exclude prose
+   so the shipped CSS reflects the apps, not the docs. */
+@source not '../../../../../**/*.md';
+
+@import './tokens.css';
+@import './charts.css';
+@import './base.css';

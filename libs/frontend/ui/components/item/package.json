@@ -1,0 +1,12 @@
+{
+  "name": "@kuetelabs/frontend/ui/components/item",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^21.2.0",
+    "@kuetelabs/frontend/ui/components/utils": "0.0.1",
+    "class-variance-authority": "^0.7.0",
+    "@spartan-ng/brain": "^0.0.1-alpha.694",
+    "@kuetelabs/frontend/ui/components/separator": "0.0.1"
+  },
+  "sideEffects": false
+}

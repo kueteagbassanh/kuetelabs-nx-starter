@@ -17,11 +17,209 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "paths": {
-      "@spartan-ng/helm/*": [
-        "./libs/shared/ui/spartan/*/src/index.ts"
+      "@kuetelabs/frontend/layouts/*": [
+        "./libs/frontend/layouts/*/src/index.ts"
       ],
-      "@kuetelabs/layouts/*": [
-        "./libs/shared/ui/layouts/*/src/index.ts"
+      "@kuetelabs/frontend/ui/components/*": [
+        "./libs/frontend/ui/components/*/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/accordion": [
+        "./libs/frontend/ui/components/accordion/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/alert": [
+        "./libs/frontend/ui/components/alert/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/alert-dialog": [
+        "./libs/frontend/ui/components/alert-dialog/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/aspect-ratio": [
+        "./libs/frontend/ui/components/aspect-ratio/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/autocomplete": [
+        "./libs/frontend/ui/components/autocomplete/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/avatar": [
+        "./libs/frontend/ui/components/avatar/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/badge": [
+        "./libs/frontend/ui/components/badge/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/breadcrumb": [
+        "./libs/frontend/ui/components/breadcrumb/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/button": [
+        "./libs/frontend/ui/components/button/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/button-group": [
+        "./libs/frontend/ui/components/button-group/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/calendar": [
+        "./libs/frontend/ui/components/calendar/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/card": [
+        "./libs/frontend/ui/components/card/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/carousel": [
+        "./libs/frontend/ui/components/carousel/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/checkbox": [
+        "./libs/frontend/ui/components/checkbox/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/collapsible": [
+        "./libs/frontend/ui/components/collapsible/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/combobox": [
+        "./libs/frontend/ui/components/combobox/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/command": [
+        "./libs/frontend/ui/components/command/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/context-menu": [
+        "./libs/frontend/ui/components/context-menu/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/date-picker": [
+        "./libs/frontend/ui/components/date-picker/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/dialog": [
+        "./libs/frontend/ui/components/dialog/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/dropdown-menu": [
+        "./libs/frontend/ui/components/dropdown-menu/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/empty": [
+        "./libs/frontend/ui/components/empty/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/field": [
+        "./libs/frontend/ui/components/field/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/hover-card": [
+        "./libs/frontend/ui/components/hover-card/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/icon": [
+        "./libs/frontend/ui/components/icon/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/input": [
+        "./libs/frontend/ui/components/input/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/input-group": [
+        "./libs/frontend/ui/components/input-group/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/input-otp": [
+        "./libs/frontend/ui/components/input-otp/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/item": [
+        "./libs/frontend/ui/components/item/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/kbd": [
+        "./libs/frontend/ui/components/kbd/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/label": [
+        "./libs/frontend/ui/components/label/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/menubar": [
+        "./libs/frontend/ui/components/menubar/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/native-select": [
+        "./libs/frontend/ui/components/native-select/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/navigation-menu": [
+        "./libs/frontend/ui/components/navigation-menu/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/pagination": [
+        "./libs/frontend/ui/components/pagination/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/popover": [
+        "./libs/frontend/ui/components/popover/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/progress": [
+        "./libs/frontend/ui/components/progress/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/radio-group": [
+        "./libs/frontend/ui/components/radio-group/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/resizable": [
+        "./libs/frontend/ui/components/resizable/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/scroll-area": [
+        "./libs/frontend/ui/components/scroll-area/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/select": [
+        "./libs/frontend/ui/components/select/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/separator": [
+        "./libs/frontend/ui/components/separator/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/sheet": [
+        "./libs/frontend/ui/components/sheet/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/sidebar": [
+        "./libs/frontend/ui/components/sidebar/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/skeleton": [
+        "./libs/frontend/ui/components/skeleton/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/slider": [
+        "./libs/frontend/ui/components/slider/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/sonner": [
+        "./libs/frontend/ui/components/sonner/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/spinner": [
+        "./libs/frontend/ui/components/spinner/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/switch": [
+        "./libs/frontend/ui/components/switch/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/table": [
+        "./libs/frontend/ui/components/table/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/tabs": [
+        "./libs/frontend/ui/components/tabs/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/textarea": [
+        "./libs/frontend/ui/components/textarea/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/toggle": [
+        "./libs/frontend/ui/components/toggle/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/toggle-group": [
+        "./libs/frontend/ui/components/toggle-group/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/tooltip": [
+        "./libs/frontend/ui/components/tooltip/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/typography": [
+        "./libs/frontend/ui/components/typography/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/components/utils": [
+        "./libs/frontend/ui/components/utils/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/charts": [
+        "./libs/frontend/ui/charts/src/index.ts"
+      ],
+      "@kuetelabs/shared/database-types": [
+        "./libs/shared/database-types/src/index.ts"
+      ],
+      "@kuetelabs/shared/domain": [
+        "./libs/shared/domain/src/index.ts"
+      ],
+      "@kuetelabs/frontend/data-access/supabase": [
+        "./libs/frontend/data-access/supabase/src/index.ts"
+      ],
+      "@kuetelabs/frontend/features/user-management/data-access": [
+        "./libs/frontend/features/user-management/data-access/src/index.ts"
+      ],
+      "@kuetelabs/frontend/features/user-management/feature": [
+        "./libs/frontend/features/user-management/feature/src/index.ts"
+      ],
+      "@kuetelabs/backend/core": [
+        "./libs/backend/core/src/index.ts"
+      ],
+      "@kuetelabs/backend/supabase": [
+        "./libs/backend/supabase/src/index.ts"
+      ],
+      "@kuetelabs/backend/user-management": [
+        "./libs/backend/user-management/feature/src/index.ts"
       ]
     }
   },

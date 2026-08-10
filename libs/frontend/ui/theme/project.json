@@ -1,0 +1,8 @@
+{
+  "name": "theme",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/ui/theme/src",
+  "projectType": "library",
+  "tags": ["platform:frontend", "type:ui"],
+  "targets": {}
+}

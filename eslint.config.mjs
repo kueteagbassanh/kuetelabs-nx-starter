@@ -16,70 +16,56 @@ export default [
           enforceBuildableLibDependency: true,
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
           depConstraints: [
-            // === LAYER CONSTRAINTS (Vertical Rules) ===
+            // --- LAYER BOUNDARIES (type:*) ---
+            // Every matching constraint applies, so a lib must satisfy its type
+            // rule AND its platform rule.
             {
               sourceTag: 'type:app',
-              onlyDependOnLibsWithTags: [
-                'type:feature',
-                'type:ui',
-                'type:data-access',
-                'type:util',
-                'type:routes',
-              ],
+              onlyDependOnLibsWithTags: ['type:layout', 'type:feature', 'type:data-access', 'type:ui', 'type:util', 'type:core']
+            },
+            {
+              sourceTag: 'type:layout',
+              onlyDependOnLibsWithTags: ['type:feature', 'type:data-access', 'type:ui', 'type:util']
             },
             {
               sourceTag: 'type:feature',
-              onlyDependOnLibsWithTags: [
-                'type:ui',
-                'type:data-access',
-                'type:util',
-              ],
+              onlyDependOnLibsWithTags: ['type:feature', 'type:data-access', 'type:ui', 'type:util', 'type:core']
             },
             {
               sourceTag: 'type:ui',
-              onlyDependOnLibsWithTags: [
-                'type:ui',
-                'type:util',
-                'type:data-access',
-              ],
-            },
-            {
-              sourceTag: 'type:routes',
-              onlyDependOnLibsWithTags: [
-                'type:routes',
-                'type:ui',
-                'type:feature',
-                'type:data-access',
-                'type:util',
-              ],
+              onlyDependOnLibsWithTags: ['type:ui', 'type:util']
             },
             {
               sourceTag: 'type:data-access',
-              onlyDependOnLibsWithTags: ['type:data-access', 'type:util'],
+              onlyDependOnLibsWithTags: ['type:data-access', 'type:util', 'type:core']
             },
             {
-              sourceTag: 'platform:api',
-              onlyDependOnLibsWithTags: [
-                'platform:api',
-                'domain:shared',
-                'type:util',
-              ],
-              // NestJS can leverage shared utility libraries or validation models, but cannot import Angular UI code!
+              sourceTag: 'type:core',
+              onlyDependOnLibsWithTags: ['type:core', 'type:data-access', 'type:util']
+            },
+            {
+              sourceTag: 'type:util',
+              onlyDependOnLibsWithTags: ['type:util']
             },
 
-            // === DOMAIN CONSTRAINTS (Horizontal Rules) ===
+            // --- PLATFORM ISOLATION BOUNDARIES (platform:*) ---
+            // This is what stops a shared zod contract from importing @nestjs/common
+            // and detonating the browser bundle.
             {
-              sourceTag: 'domain:products',
-              onlyDependOnLibsWithTags: ['domain:products', 'domain:shared'],
-              // ❌ Blocks the products domain from importing code from the payments or orders domain
+              sourceTag: 'platform:web',
+              onlyDependOnLibsWithTags: ['platform:frontend', 'platform:shared']
             },
             {
-              sourceTag: 'domain:payments',
-              onlyDependOnLibsWithTags: [
-                'domain:payments',
-                'domain:products',
-                'domain:shared',
-              ],
+              sourceTag: 'platform:frontend',
+              onlyDependOnLibsWithTags: ['platform:frontend', 'platform:shared']
+            },
+            {
+              sourceTag: 'platform:backend',
+              onlyDependOnLibsWithTags: ['platform:backend', 'platform:shared']
+            },
+            {
+              sourceTag: 'platform:shared',
+              onlyDependOnLibsWithTags: ['platform:shared']
             },
           ],
         },
