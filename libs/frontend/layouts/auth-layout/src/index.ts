@@ -1,1 +1,1 @@
-export * from './lib/auth-layout.routes';
+export * from './lib/auth-container';

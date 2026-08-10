@@ -53,7 +53,7 @@ export const UsersStore = signalStore(
      * slow earlier response can never overwrite a newer one. catchError sits inside
      * switchMap to keep the outer stream alive after a failure.
      */
-    const search = rxMethod<string>(
+    const runSearch = rxMethod<string>(
       pipe(
         debounceTime(250),
         distinctUntilChanged(),
@@ -77,16 +77,15 @@ export const UsersStore = signalStore(
 
     const reload = (): void => {
       // rxMethod returns a subscription ref; the callers here don't need it.
-      search(store.search());
+      runSearch(store.search());
     };
 
     return {
-      search,
       reload,
 
       setSearch(term: string): void {
         patchState(store, { search: term });
-        search(term);
+        runSearch(term);
       },
 
       async loadMatrix(): Promise<void> {

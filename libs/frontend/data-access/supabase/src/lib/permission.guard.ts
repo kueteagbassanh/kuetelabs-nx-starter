@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { Router, type CanActivateFn } from '@angular/router';
 import type { AppPermission } from '@kuetelabs/shared/domain';
 import { AuthStore } from './auth.store';
+import { SUPABASE_CONFIG, isSupabaseConfigured } from './supabase.config';
 
 /**
  * Route guard for a required permission.
@@ -34,3 +35,16 @@ export const authenticatedGuard: CanActivateFn = () => {
   const router = inject(Router);
   return auth.isAuthenticated() ? true : router.createUrlTree(['/auth/login']);
 };
+
+/**
+ * Sends the user to a setup page when Supabase credentials are missing, instead of
+ * letting a page construct a client and throw. Keeps a freshly cloned starter
+ * navigable before anyone pastes an anon key.
+ */
+export function supabaseConfiguredGuard(setupPath = '/auth/setup'): CanActivateFn {
+  return () => {
+    const config = inject(SUPABASE_CONFIG, { optional: true });
+    const router = inject(Router);
+    return isSupabaseConfigured(config) ? true : router.createUrlTree([setupPath]);
+  };
+}

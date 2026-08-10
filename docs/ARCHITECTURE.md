@@ -539,6 +539,48 @@ shows the demo dashboard; the bell, the Notifications nav entry, and the pages t
 appear once credentials exist. Follow that pattern for any future feature that needs a session at
 construction time.
 
+
+---
+
+## 7d. Auth pages
+
+One set of screens, mounted by every app: login, signup, forgot-password, reset-password, the
+OAuth/email callback, and a setup page. Files: `libs/frontend/features/auth/feature`, with chrome
+from `libs/frontend/layouts/auth-layout`.
+
+```ts
+// apps/<app>/src/app/app.routes.ts
+{ path: 'auth', component: AuthContainer, children: authRoutes }
+
+// apps/<app>/src/app/app.config.ts
+provideAuthPages({ appName: 'Admin', redirectAfterLogin: '/', signupEnabled: false, oauthProviders: [] })
+```
+
+**Chrome is a layout, screens are a feature, the app composes them.** `AuthContainer` holds only the
+centered column; the pages hold the forms and talk to `AuthStore`. That split exists because
+`type:layout` may not depend on `type:data-access` — putting the forms in the layout would have
+forced the boundary open. The app, being `type:app`, may import both, so composition happens there.
+
+**Behaviour is config, not forks.** `AUTH_PAGES_CONFIG` carries the app name, post-login redirect,
+whether self-signup is offered, and which OAuth providers to show. `admin` sets
+`signupEnabled: false` (invite-only, per §7b) and `web` leaves it on — the same components render
+both, with no per-app copies to keep in sync.
+
+### Details that are easy to get wrong
+
+- **Auth routes must not be prerendered.** `apps/web/src/app/app.routes.server.ts` gives `auth/**`
+  `RenderMode.Client`: prerendering would ship a logged-out shell to everyone, and the Supabase
+  client stores its session in `localStorage`, which does not exist on the server.
+- **The callback route handles every redirect** — OAuth, email confirmation, and recovery — by
+  exchanging `code` for a session. Recovery links are forwarded to `reset-password` rather than the
+  app, otherwise the user lands signed in with no way to set a password.
+- **Enumeration.** Forgot-password always shows the same confirmation, and signup never says an
+  address is taken. Supabase's own errors are surfaced verbatim on login precisely because it does
+  not distinguish unknown-email from wrong-password.
+- **No credentials, no crash.** `supabaseConfiguredGuard()` diverts to `/auth/setup`, which explains
+  how to start Supabase and where to paste the anon key, instead of letting a page construct a
+  client and throw.
+
 ## 8. Shared contracts and generated types
 
 ```sh
@@ -679,8 +721,8 @@ Ordered by leverage. Items 1–2 are done; the rest are open.
 | 2 | Fix layout libs' `sourceRoot`, `$schema` depth, base-eslint import depth; add `platform:frontend` tags | **done** |
 | 3 | Add the `platform:*` and remaining `type:*` `depConstraints` from §4 | **done** |
 | 4 | Create `libs/shared/database-types` + `libs/shared/domain`; wire `supabase gen types` | **done** (types hand-written until the local stack runs) |
-| 5 | Create `libs/frontend/data-access/supabase` (provider, `AuthStore`, guards) | **done** — `auth-layout` login/signup forms still not wired to it |
-| 6 | Split `app.routes.server.ts` render modes (§5) before shipping any authenticated route | open |
+| 5 | Create `libs/frontend/data-access/supabase` (provider, `AuthStore`, guards); wire the auth screens to it | **done** (§7d) |
+| 6 | Split `app.routes.server.ts` render modes (§5) | **done** for `auth/**`; the dashboard shell is still prerendered |
 | 7 | Restructure `apps/api`: `libs/backend/core` + `libs/backend/supabase`, `AppModule` as composition root | **done** |
 | 8 | Add `libs/backend/email` with Resend + React Email templates | open |
 | 9 | Add `admin` app + `admin-e2e` | **done** |

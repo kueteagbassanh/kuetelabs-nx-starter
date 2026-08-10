@@ -88,6 +88,15 @@ Component conventions (see `libs/frontend/ui/components/button`):
 - **`rxMethod` for anything with RxJS semantics** — debounce, cancellation, retry. The user search uses `debounceTime` + `distinctUntilChanged` + `switchMap`, so typing issues one request and a slow earlier response cannot overwrite a newer one. Keep `catchError` *inside* `switchMap` or the outer stream dies on the first failure.
 - Mutate only through `patchState`; never assign to a state signal directly.
 
+## Auth pages
+
+`libs/frontend/features/auth/feature` holds login, signup, forgot/reset password, the OAuth + email callback, and a setup page; `libs/frontend/layouts/auth-layout` holds only the centered chrome. Apps compose them: `{ path: 'auth', component: AuthContainer, children: authRoutes }` plus `provideAuthPages({ ... })` for app name, post-login redirect, `signupEnabled`, and OAuth providers. `admin` is invite-only, `web` allows signup — same components, different config.
+
+- **Never prerender `auth/**`** — `RenderMode.Client` in `app.routes.server.ts`. A prerendered auth page is a logged-out shell for every visitor, and the Supabase session lives in `localStorage`.
+- The callback route handles OAuth, email confirmation, and recovery; recovery is forwarded to `reset-password`.
+- Forgot-password and signup deliberately give identical responses whether or not the account exists — do not "improve" those messages.
+- Routes are behind `supabaseConfiguredGuard()`, which diverts to `/auth/setup` when no anon key is set.
+
 ## Notifications
 
 In-app center + toasts. `notifications` has no client insert policy — the API writes rows with the service_role key from the same hooks that audit RBAC changes (`libs/backend/notification`). Reads and mark-as-read go straight to Supabase under RLS; delivery is a Realtime subscription in `NotificationsStore`.

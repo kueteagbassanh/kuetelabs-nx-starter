@@ -8,7 +8,11 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideSupabase } from '@kuetelabs/frontend/data-access/supabase';
+import { provideAuthPages } from '@kuetelabs/frontend/features/auth/feature';
 import { provideHlmSidebarConfig } from '@kuetelabs/frontend/ui/components/sidebar';
+import { environment } from '../environments/environment';
 import {
   DASHBOARD_MENU_CONFIG,
   type SidebarConfig,
@@ -138,6 +142,15 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes, withComponentInputBinding()),
+    provideHttpClient(withFetch()),
+    provideSupabase({ url: environment.supabaseUrl, anonKey: environment.supabaseAnonKey }),
+    // Same pages as admin, different policy: the public app allows self-signup.
+    provideAuthPages({
+      appName: environment.appName,
+      redirectAfterLogin: '/',
+      signupEnabled: true,
+      oauthProviders: [],
+    }),
     provideHlmSidebarConfig({
       closeMobileSidebarOnMenuButtonClick: true,
       sidebarWidth: '16rem',

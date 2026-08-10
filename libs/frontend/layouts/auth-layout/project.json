@@ -4,7 +4,10 @@
   "sourceRoot": "libs/frontend/layouts/auth-layout/src",
   "prefix": "lib",
   "projectType": "library",
-  "tags": ["platform:frontend", "type:layout"],
+  "tags": [
+    "platform:frontend",
+    "type:layout"
+  ],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"

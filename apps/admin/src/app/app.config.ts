@@ -26,6 +26,7 @@ import {
   type SidebarConfig,
 } from '@kuetelabs/frontend/layouts/dashboard-layout';
 import { NotificationBell } from '@kuetelabs/frontend/features/notification/feature';
+import { provideAuthPages } from '@kuetelabs/frontend/features/auth/feature';
 import { appRoutes } from './app.routes';
 
 /**
@@ -79,6 +80,14 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes, withComponentInputBinding()),
     provideHttpClient(withFetch()),
+    // Admin is invite-only: no self-service signup, and OAuth stays off until the
+    // provider credentials are configured in supabase/config.toml.
+    provideAuthPages({
+      appName: 'Admin',
+      redirectAfterLogin: '/',
+      signupEnabled: false,
+      oauthProviders: [],
+    }),
     provideSupabase({ url: environment.supabaseUrl, anonKey: environment.supabaseAnonKey }),
     { provide: USER_ADMIN_API_URL, useValue: environment.apiUrl },
     // Icons provided here merge with the layout's own set, so each app brings

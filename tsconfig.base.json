@@ -232,6 +232,9 @@
       ],
       "@kuetelabs/backend/notification": [
         "./libs/backend/notification/feature/src/index.ts"
+      ],
+      "@kuetelabs/frontend/features/auth/feature": [
+        "./libs/frontend/features/auth/feature/src/index.ts"
       ]
     }
   },

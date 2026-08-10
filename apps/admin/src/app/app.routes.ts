@@ -1,4 +1,6 @@
 import { Route } from '@angular/router';
+import { AuthContainer } from '@kuetelabs/frontend/layouts/auth-layout';
+import { authRoutes } from '@kuetelabs/frontend/features/auth/feature';
 import { DashboardLayout } from '@kuetelabs/frontend/layouts/dashboard-layout';
 // Static import: the header bell already pulls this lib into the initial bundle, so
 // lazy-loading it here would only mix static and dynamic imports of one library.
@@ -6,6 +8,12 @@ import { DashboardLayout } from '@kuetelabs/frontend/layouts/dashboard-layout';
 import { notificationRoutes } from '@kuetelabs/frontend/features/notification/feature';
 
 export const appRoutes: Route[] = [
+  {
+    // Chrome from the layout lib, screens from the feature lib, composed here.
+    path: 'auth',
+    component: AuthContainer,
+    children: authRoutes,
+  },
   {
     path: '',
     component: DashboardLayout,
