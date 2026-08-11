@@ -107,6 +107,29 @@ Component conventions (see `libs/frontend/ui/components/button`):
   `returnUrl` is accepted only when it starts with a single `/` — otherwise login is an open
   redirect. See `docs/ARCHITECTURE.md` §7d.
 
+## Docs pages
+
+`libs/frontend/layouts/docs-layout` is the documentation shell: sticky header, sidebar tree,
+article, "on this page" rail, prev/next pager. Apps mount it as a routed component
+(`{ path: 'docs', component: DocsLayout, children: [...] }`) and configure it with
+`provideDocsLayout({ title, navigation, repositoryUrl, editBaseUrl, headerActions })` — which
+returns an **array**, so spread it. Full notes in that lib's README.
+
+- **Tree paths are absolute route paths** (`/docs/installation`). The sidebar feeds them to
+  `routerLink` and `DocsNavStore` finds the current page by comparing them to the router URL;
+  `external: true` links are plain anchors and sit outside the prev/next reading order.
+- **The TOC reads the rendered article** — pages arrive through `<router-outlet />`, so it scans
+  `h2`/`h3` from the DOM, assigns ids where a heading has none (authored ids win), and re-scans
+  through a `MutationObserver`. All browser-only: the first scan is in `afterNextRender`, so a
+  prerendered docs page hydrates before anything touches it.
+- **`scrollOffset` is one number for two jobs** — the scroll-spy line and the `scroll-margin-top`
+  written onto each heading. Change the header height and change it too.
+- Active states use `data-[active]` variants and `!` utilities deliberately: `text-foreground` and
+  `text-muted-foreground` are the same property, so Tailwind's output order decides the winner,
+  not class order in the attribute.
+- Like `error-layout`, this lib imports nothing from `data-access` — the docs render with no
+  Supabase configured. Anything needing a session goes in a `headerActions` component.
+
 ## Notifications
 
 In-app center + toasts. `notifications` has no client insert policy — the API writes rows with the service_role key from the same hooks that audit RBAC changes (`libs/backend/notification`). Reads and mark-as-read go straight to Supabase under RLS; delivery is a Realtime subscription in `NotificationsStore`.
