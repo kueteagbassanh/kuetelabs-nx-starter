@@ -566,8 +566,44 @@ whether self-signup is offered, and which OAuth providers to show. `admin` sets
 `signupEnabled: false` (invite-only, per §7b) and `web` leaves it on — the same components render
 both, with no per-app copies to keep in sync.
 
+### Route guards
+
+`libs/frontend/data-access/supabase` exports four guards. Apps wire them; nothing else decides
+who gets in.
+
+```ts
+// the whole dashboard shell, in one place
+{ path: '', component: DashboardLayout, canActivate: [authenticatedGuard], children: [...] }
+```
+
+- **`authenticatedGuard`** — signed out, you land on `/auth/login?returnUrl=<where you were>`, and
+  login sends you back there afterwards.
+- **`guestGuard`** — signed in, login and signup bounce you to `AUTH_NAVIGATION.afterLoginPath`. It
+  is on those two routes only: `reset-password` runs *with* the recovery session, and `callback`
+  runs while the sign-in is completing, so guarding either would lock the user out mid-flow.
+- **`permissionGuard(...perms)`** — signed in plus every listed permission, else `/forbidden`.
+- **`supabaseConfiguredGuard(setupPath?)`** — see below.
+
+Paths are not hardcoded per guard: `AUTH_NAVIGATION` (a root `InjectionToken`) carries `loginPath`,
+`forbiddenPath`, and `afterLoginPath`, defaulting to `/auth/login`, `/forbidden`, `/`. Override it
+in `app.config.ts` if an app mounts the auth screens somewhere other than `/auth`.
+
+**These guards are UX, not security.** They pick what renders. RLS and the API's
+`@RequirePermissions` decide what data anyone can actually reach — see §7b.
+
 ### Details that are easy to get wrong
 
+- **Wait for session restoration.** `getSession()` is asynchronous, so `isAuthenticated()` is still
+  false for the first few milliseconds after boot. Every guard here awaits `AuthStore.loading`
+  falling to `false` before deciding; reading the signal synchronously bounces a signed-in user to
+  the login page on every hard refresh. This is the single most common way these guards go wrong.
+- **`returnUrl` is validated before use.** `login-page` accepts it only when it starts with a single
+  `/` — a full URL or `//evil.example` would turn the login screen into an open redirect. OAuth
+  carries it through the provider round-trip on the `/auth/callback` query string.
+- **No credentials means no enforcement.** When `supabaseUrl`/`supabaseAnonKey` are unset,
+  `authenticatedGuard` and `permissionGuard` return `true` (with a dev-mode console warning) so a
+  freshly cloned starter is still navigable — there is no session to check and no data to protect.
+  Auth turns on the moment a real anon key is set.
 - **Auth routes must not be prerendered.** `apps/web/src/app/app.routes.server.ts` gives `auth/**`
   `RenderMode.Client`: prerendering would ship a logged-out shell to everyone, and the Supabase
   client stores its session in `localStorage`, which does not exist on the server.

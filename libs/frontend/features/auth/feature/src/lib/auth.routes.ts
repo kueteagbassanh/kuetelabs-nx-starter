@@ -1,5 +1,5 @@
 import type { Routes } from '@angular/router';
-import { supabaseConfiguredGuard } from '@kuetelabs/frontend/data-access/supabase';
+import { guestGuard, supabaseConfiguredGuard } from '@kuetelabs/frontend/data-access/supabase';
 
 /**
  * Auth screens, mounted by each app under its own path:
@@ -23,11 +23,15 @@ export const authRoutes: Routes = [
     canActivateChild: [supabaseConfiguredGuard()],
     children: [
       {
+        // guestGuard only here: reset-password needs the recovery session, and the
+        // callback runs while signing in, so neither may bounce authenticated users.
         path: 'login',
+        canActivate: [guestGuard],
         loadComponent: () => import('./pages/login-page').then((m) => m.LoginPage),
       },
       {
         path: 'signup',
+        canActivate: [guestGuard],
         loadComponent: () => import('./pages/signup-page').then((m) => m.SignupPage),
       },
       {

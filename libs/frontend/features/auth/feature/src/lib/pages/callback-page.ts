@@ -58,8 +58,12 @@ export class CallbackPage implements OnInit {
     }
 
     // Recovery links must land on the reset form, not the app.
-    const target =
-      params.get('type') === 'recovery' ? '../reset-password' : this.config.redirectAfterLogin;
+    const requested = params.get('returnUrl');
+    const safeReturn =
+      requested?.startsWith('/') && !requested.startsWith('//')
+        ? requested
+        : this.config.redirectAfterLogin;
+    const target = params.get('type') === 'recovery' ? '../reset-password' : safeReturn;
 
     await this.router.navigate([target], {
       relativeTo: params.get('type') === 'recovery' ? this.route : null,

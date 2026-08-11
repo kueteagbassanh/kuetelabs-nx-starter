@@ -96,6 +96,16 @@ Component conventions (see `libs/frontend/ui/components/button`):
 - The callback route handles OAuth, email confirmation, and recovery; recovery is forwarded to `reset-password`.
 - Forgot-password and signup deliberately give identical responses whether or not the account exists — do not "improve" those messages.
 - Routes are behind `supabaseConfiguredGuard()`, which diverts to `/auth/setup` when no anon key is set.
+- **Guards live in `libs/frontend/data-access/supabase`, and apps wire them.** The dashboard shell
+  route carries `canActivate: [authenticatedGuard]`; signed-out users land on
+  `/auth/login?returnUrl=<url>` and are sent back after login. `guestGuard` goes on login/signup
+  only — `reset-password` needs the recovery session and `callback` runs mid-sign-in. Paths come
+  from the `AUTH_NAVIGATION` token, not literals.
+- **Every guard awaits `AuthStore.loading` before deciding.** `getSession()` is async, so a
+  synchronous `isAuthenticated()` check bounces signed-in users to login on every hard refresh.
+- With no anon key the guards pass through (dev warning) so a fresh clone stays navigable, and
+  `returnUrl` is accepted only when it starts with a single `/` — otherwise login is an open
+  redirect. See `docs/ARCHITECTURE.md` §7d.
 
 ## Notifications
 

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import type { Provider } from '@supabase/supabase-js';
 import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
 import { HlmCardImports } from '@kuetelabs/frontend/ui/components/card';
@@ -91,8 +91,20 @@ import { OauthButtons } from '../oauth-buttons';
 export class LoginPage {
   private readonly auth = inject(AuthStore);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   protected readonly config = inject(AUTH_PAGES_CONFIG);
+
+  /**
+   * Where authenticatedGuard was headed when it interrupted. Only same-origin
+   * relative paths are honoured — an absolute URL here would be an open redirect.
+   */
+  private returnUrl(): string {
+    const requested = this.route.snapshot.queryParamMap.get('returnUrl');
+    return requested?.startsWith('/') && !requested.startsWith('//')
+      ? requested
+      : this.config.redirectAfterLogin;
+  }
 
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -119,13 +131,15 @@ export class LoginPage {
       this.error.set(error.message);
       return;
     }
-    await this.router.navigateByUrl(this.config.redirectAfterLogin);
+    await this.router.navigateByUrl(this.returnUrl());
   }
 
   protected async withProvider(provider: Provider): Promise<void> {
     this.busy.set(true);
     this.error.set(null);
-    const redirectTo = `${window.location.origin}/auth/callback`;
+    // Carry the destination through the provider round trip.
+    const returnUrl = encodeURIComponent(this.returnUrl());
+    const redirectTo = `${window.location.origin}/auth/callback?returnUrl=${returnUrl}`;
     const { error } = await this.auth.signInWithOAuth(provider, redirectTo);
     if (error) {
       this.busy.set(false);
