@@ -2,7 +2,11 @@ import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withInMemoryScrolling,
+} from '@angular/router';
 import { appRoutes } from './app.routes';
 import {
   provideClientHydration,
@@ -13,6 +17,8 @@ import {
   DASHBOARD_MENU_CONFIG,
   type SidebarConfig,
 } from '@kuetelabs/frontend/layouts/dashboard-layout';
+import { provideLandingLayout } from '@kuetelabs/frontend/layouts/landing-layout';
+import { landingConfig } from './landing.config';
 
 
 
@@ -137,7 +143,15 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideClientHydration(withEventReplay()),
     provideBrowserGlobalErrorListeners(),
-    provideRouter(appRoutes, withComponentInputBinding()),
+    // `anchorScrolling` is what makes the header's `/#features` style links work.
+    provideRouter(
+      appRoutes,
+      withComponentInputBinding(),
+      withInMemoryScrolling({
+        anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'enabled',
+      }),
+    ),
     provideHlmSidebarConfig({
       closeMobileSidebarOnMenuButtonClick: true,
       sidebarWidth: '16rem',
@@ -150,5 +164,7 @@ export const appConfig: ApplicationConfig = {
     }),
     // 🔥 Tell the layout engine to use this specific array for this app instance
     { provide: DASHBOARD_MENU_CONFIG, useValue: dashboardMenu },
+    // Same idea for the public shell: all marketing copy comes from this object.
+    provideLandingLayout(landingConfig),
   ],
 };
