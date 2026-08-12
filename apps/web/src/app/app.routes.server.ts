@@ -12,7 +12,7 @@ export const serverRoutes: ServerRoute[] = [
     // Behind authenticatedGuard, so prerendering it would bake a logged-out render
     // and serve it to everyone — the same trap as auth/**. The /error/* screens
     // stay prerendered on purpose: they need no session.
-    path: 'forbidden',
+    path: 'dashboard/forbidden',
     renderMode: RenderMode.Client,
   },
   {
