@@ -1,0 +1,17 @@
+{
+  "name": "notification-feature",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/features/notification/feature/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": [
+    "platform:frontend",
+    "type:feature",
+    "scope:notification"
+  ],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

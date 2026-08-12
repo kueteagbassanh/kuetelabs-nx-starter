@@ -1,0 +1,11 @@
+{
+  "name": "@kuetelabs/frontend/ui/components/spinner",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^21.2.0",
+    "@ng-icons/core": ">=32.0.0 <34.0.0",
+    "@ng-icons/lucide": ">=32.0.0 <34.0.0",
+    "@kuetelabs/frontend/ui/components/utils": "0.0.1"
+  },
+  "sideEffects": false
+}

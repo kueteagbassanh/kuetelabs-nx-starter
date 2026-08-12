@@ -1,0 +1,17 @@
+{
+  "name": "user-management-feature",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/features/user-management/feature/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": [
+    "platform:frontend",
+    "type:feature",
+    "scope:user-management"
+  ],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

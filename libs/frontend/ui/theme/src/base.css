@@ -1,0 +1,10 @@
+/* Base layer applied to every app. */
+
+@layer base {
+* {
+@apply border-border outline-ring/50;
+}
+body {
+@apply bg-background text-foreground;
+}
+}

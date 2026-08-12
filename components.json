@@ -1,6 +1,6 @@
 {
-  "componentsPath": "libs/shared/ui/spartan",
+  "componentsPath": "libs/frontend/ui/components",
   "buildable": true,
   "generateAs": "library",
-  "importAlias": "@spartan-ng/helm"
+  "importAlias": "@kuetelabs/frontend/ui/components"
 }

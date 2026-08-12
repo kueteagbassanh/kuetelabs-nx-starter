@@ -6,6 +6,23 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!--
+      Applies the stored theme before first paint, so a dark-mode visitor never
+      sees a white flash. `ThemeStore` reads the same key and owns it afterwards.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('kuetelabs-theme');
+          var dark =
+            stored === 'dark' ||
+            (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {
+          /* Storage is optional. */
+        }
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

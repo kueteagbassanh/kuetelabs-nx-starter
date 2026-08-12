@@ -1,0 +1,13 @@
+{
+  "name": "backend-user-management",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/user-management/feature/src",
+  "projectType": "library",
+  "tags": [
+    "platform:backend",
+    "type:feature",
+    "scope:user-management"
+  ],
+  "// targets": "to see all targets run: nx show project backend-user-management --web",
+  "targets": {}
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@kuetelabs/frontend/ui/components/input-group",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^21.2.0",
+    "@kuetelabs/frontend/ui/components/utils": "0.0.1",
+    "class-variance-authority": "^0.7.0",
+    "@kuetelabs/frontend/ui/components/button": "0.0.1",
+    "@kuetelabs/frontend/ui/components/input": "0.0.1",
+    "@kuetelabs/frontend/ui/components/textarea": "0.0.1"
+  },
+  "sideEffects": false
+}

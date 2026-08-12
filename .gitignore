@@ -53,3 +53,5 @@ __screenshots__/
 .env
 .env.local
 .env.*.local
+# Local UI screenshots (tools/screenshot.mjs)
+.screenshots/

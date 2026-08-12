@@ -1,0 +1,67 @@
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
+import { HlmCardImports } from '@kuetelabs/frontend/ui/components/card';
+import { HlmFieldImports } from '@kuetelabs/frontend/ui/components/field';
+import { HlmInputImports } from '@kuetelabs/frontend/ui/components/input';
+
+@Component({
+	selector: 'lib-login-form',
+	imports: [ReactiveFormsModule, RouterLink, HlmCardImports, HlmFieldImports, HlmInputImports, HlmButtonImports],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `
+		<hlm-card>
+			<hlm-card-header>
+				<h3 hlmCardTitle>Login to your account</h3>
+				<p hlmCardDescription>Enter your email below to login to your account</p>
+			</hlm-card-header>
+			<div hlmCardContent>
+				<form [formGroup]="form" (ngSubmit)="login()">
+					<hlm-field-group>
+						<hlm-field>
+							<label hlmFieldLabel for="email">Email</label>
+							<input hlmInput type="email" id="email" placeholder="m@example.com" formControlName="email" />
+							<hlm-field-error validator="required">Email is required.</hlm-field-error>
+							<hlm-field-error validator="email">Enter a valid email address.</hlm-field-error>
+						</hlm-field>
+						<hlm-field>
+							<div class="flex items-center">
+								<label hlmFieldLabel for="password">Password</label>
+								<a hlmFieldDescription class="ml-auto text-sm underline-offset-4 hover:underline" routerLink=".">
+									Forgot password?
+								</a>
+							</div>
+							<input hlmInput type="password" id="password" formControlName="password" />
+							<hlm-field-error validator="required">Password is required.</hlm-field-error>
+							<hlm-field-error validator="minlength">Password must be at least 8 characters long.</hlm-field-error>
+						</hlm-field>
+						<hlm-field>
+							<button hlmBtn type="submit" [disabled]="form.invalid">Login</button>
+							<button hlmBtn variant="outline" type="button">Login with Google</button>
+							<p hlmFieldDescription class="text-center">
+								Don't have an account?
+								<a routerLink=".">Sign up</a>
+							</p>
+						</hlm-field>
+					</hlm-field-group>
+				</form>
+			</div>
+		</hlm-card>
+	`,
+})
+export class LoginForm {
+	private readonly _fb = inject(FormBuilder);
+
+	public form = this._fb.group({
+		email: ['', [Validators.required, Validators.email]],
+		password: ['', [Validators.required, Validators.minLength(8)]],
+	});
+
+	public login() {
+		if (this.form.valid) {
+			// login logic here
+			console.log(this.form.value);
+		}
+	}
+}

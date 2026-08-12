@@ -1,0 +1,6 @@
+/* Entry stylesheet for the admin app.
+ *
+ * The design system — Tailwind layers, spartan preset, tokens, chart theming, base
+ * layer — lives in libs/frontend/ui/theme so every app shares one source of truth.
+ * Put app-specific styles below the import; put anything reusable in the lib. */
+@import '../../../libs/frontend/ui/theme/src/index.css';

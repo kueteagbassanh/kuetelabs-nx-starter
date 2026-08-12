@@ -1,0 +1,33 @@
+{
+  "name": "pagination",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/ui/components/pagination/src",
+  "prefix": "hlm",
+  "projectType": "library",
+  "tags": [
+    "platform:frontend",
+    "type:ui"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": [
+        "{workspaceRoot}/dist/{projectRoot}"
+      ],
+      "options": {
+        "project": "libs/frontend/ui/components/pagination/ng-package.json",
+        "tsConfig": "libs/frontend/ui/components/pagination/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/frontend/ui/components/pagination/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

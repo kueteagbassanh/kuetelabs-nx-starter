@@ -1,0 +1,12 @@
+{
+  "name": "@kuetelabs/frontend/ui/components/alert-dialog",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^21.2.0",
+    "@kuetelabs/frontend/ui/components/button": "0.0.1",
+    "@spartan-ng/brain": "^0.0.1-alpha.694",
+    "@kuetelabs/frontend/ui/components/utils": "0.0.1",
+    "clsx": "^2.1.1"
+  },
+  "sideEffects": false
+}

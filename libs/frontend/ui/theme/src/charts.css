@@ -1,0 +1,85 @@
+/* Chart theming — Tailwind utilities for the palette plus the Unovis variable
+   bridge used by @kuetelabs/frontend/ui/charts. See docs/ARCHITECTURE.md §7a. */
+
+/* Expose the chart tokens as Tailwind utilities: bg-chart-1, text-chart-2,
+   stroke-chart-3, fill-chart-4 — used for legend swatches and direct labels. */
+@theme inline {
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+}
+
+/* ─── Angular Charts / Unovis theme bridge ──────────────────────────────────
+   angular-chrts renders through Unovis, which is styled entirely with --vis-*
+   custom properties. Mapping them onto the design tokens above means charts
+   inherit the theme — including the .dark toggle — with no per-chart config.
+   Unovis switches to its --vis-dark-* set when it detects a dark context, so
+   both sets are declared here and both resolve through the same tokens; that
+   keeps charts correct whether dark comes from the class toggle or from the
+   OS preference. Set colors on series via categories: { color: 'var(--chart-1)' }.
+
+   Declared on `:root:root` on purpose: Unovis injects its own `:root` block at
+   runtime, which beats a plain `:root` of equal specificity by load order (that is
+   why the upstream docs reach for `!important` on every variable). The doubled
+   selector wins on specificity instead, with no `!important` to unpick later. */
+:root:root {
+	--vis-font-family: var(--font-sans);
+
+	--vis-color0: var(--chart-1);
+	--vis-color1: var(--chart-2);
+	--vis-color2: var(--chart-3);
+	--vis-color3: var(--chart-4);
+	--vis-color4: var(--chart-5);
+	--vis-color5: var(--chart-1);
+	--vis-dark-color0: var(--chart-1);
+	--vis-dark-color1: var(--chart-2);
+	--vis-dark-color2: var(--chart-3);
+	--vis-dark-color3: var(--chart-4);
+	--vis-dark-color4: var(--chart-5);
+	--vis-dark-color5: var(--chart-1);
+
+	/* Axes and grid stay recessive. Note: --border is translucent in dark
+	   (oklch(1 0 0 / 10%)) and Unovis drops alpha when it re-emits a parsed color,
+	   which paints a solid white grid. --chart-grid is the opaque equivalent. */
+	--chart-grid: color-mix(in oklab, var(--foreground) 12%, var(--background));
+	--vis-axis-domain-color: var(--chart-grid);
+	--vis-axis-tick-color: var(--chart-grid);
+	--vis-axis-grid-color: var(--chart-grid);
+	--vis-axis-tick-label-color: var(--muted-foreground);
+	--vis-axis-label-color: var(--muted-foreground);
+	--vis-dark-axis-domain-color: var(--chart-grid);
+	--vis-dark-axis-tick-color: var(--chart-grid);
+	--vis-dark-axis-grid-color: var(--chart-grid);
+	--vis-dark-axis-tick-label-color: var(--muted-foreground);
+	--vis-dark-axis-label-color: var(--muted-foreground);
+	--vis-axis-grid-line-width: 1px;
+	--vis-axis-tick-label-font-size: 0.75rem;
+	--vis-axis-label-font-size: 0.75rem;
+	--vis-axis-tick-label-weight: 400;
+
+	/* Tooltip reads as a popover surface. */
+	--vis-tooltip-background-color: var(--popover);
+	--vis-tooltip-border-color: var(--chart-grid);
+	--vis-tooltip-text-color: var(--popover-foreground);
+	--vis-tooltip-shadow-color: oklch(0 0 0 / 10%);
+	--vis-dark-tooltip-background-color: var(--popover);
+	--vis-dark-tooltip-border-color: var(--chart-grid);
+	--vis-dark-tooltip-text-color: var(--popover-foreground);
+	--vis-dark-tooltip-shadow-color: oklch(0 0 0 / 40%);
+	--vis-tooltip-padding: 0.5rem 0.75rem;
+	--vis-tooltip-backdrop-filter: none;
+
+	--vis-crosshair-line-stroke-color: var(--chart-grid);
+	--vis-crosshair-circle-stroke-color: var(--background);
+
+	--vis-legend-label-color: var(--muted-foreground);
+
+	/* 2px surface gap between stacked segments so adjacent fills stay readable. */
+	--vis-stacked-bar-stroke-color: var(--background);
+	--vis-stacked-bar-stroke-width: 2px;
+	--vis-dark-stacked-bar-stroke: var(--background);
+	--vis-area-stroke-width: 2px;
+	--vis-dark-area-stroke: var(--background);
+}

@@ -1,0 +1,17 @@
+{
+  "name": "user-management-data-access",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/features/user-management/data-access/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": [
+    "platform:frontend",
+    "type:data-access",
+    "scope:user-management"
+  ],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

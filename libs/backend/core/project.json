@@ -1,0 +1,12 @@
+{
+  "name": "backend-core",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/core/src",
+  "projectType": "library",
+  "tags": [
+    "platform:backend",
+    "type:core"
+  ],
+  "// targets": "to see all targets run: nx show project backend-core --web",
+  "targets": {}
+}
