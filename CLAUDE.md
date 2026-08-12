@@ -107,6 +107,30 @@ Component conventions (see `libs/frontend/ui/components/button`):
   `returnUrl` is accepted only when it starts with a single `/` — otherwise login is an open
   redirect. See `docs/ARCHITECTURE.md` §7d.
 
+## Error pages
+
+`libs/frontend/layouts/error-layout` holds every error screen — 400, 401, 403, 404, 408, 410, 429,
+500, 502, 503, 504, `offline`, `maintenance`, and a generic `unknown` fallback. Unlike auth, the
+pages stay in the layout lib: they hold no logic and depend on nothing but `type:ui`. Full model in
+`docs/ARCHITECTURE.md` §7e.
+
+- **One `ErrorPage` component; the difference between screens is data in `ERROR_CATALOG`.** Add a
+  status by adding a catalog entry — `createErrorRoutes()` generates the route from it. Don't write
+  a component per status.
+- Apps compose `{ path: 'error', children: errorRoutes }` **before** the `''` dashboard route (which
+  prefix-matches everything) and `notFoundRoute()` last. 404 renders in place rather than
+  redirecting, so the broken URL stays in the address bar.
+- `/forbidden` (`AUTH_NAVIGATION.forbiddenPath`) is mounted inside the dashboard shell with
+  `data: { code: 403, inline: true }` — `inline` swaps `min-h-svh` for `flex-1`. It is
+  `RenderMode.Client` in `app.routes.server.ts`: it is behind `authenticatedGuard`, so prerendering
+  it ships a logged-out render, exactly as with `auth/**`.
+- **`web` prerenders `/error/*`, so nothing browser-only may change the DOM during hydration.**
+  "Go back" depends on `history.length` and is resolved in `afterNextRender`, not the constructor.
+  Route paths are static for the same reason — `error/:code` would need `getPrerenderParams`.
+- The lib imports nothing from `data-access` on purpose, so these screens still render when Supabase
+  is missing or broken. `ERROR_PAGES_CONFIG.loginPath` therefore mirrors `AUTH_NAVIGATION.loginPath`
+  by hand — keep the two in step.
+
 ## Notifications
 
 In-app center + toasts. `notifications` has no client insert policy — the API writes rows with the service_role key from the same hooks that audit RBAC changes (`libs/backend/notification`). Reads and mark-as-read go straight to Supabase under RLS; delivery is a Realtime subscription in `NotificationsStore`.

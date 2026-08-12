@@ -27,6 +27,7 @@ import {
 } from '@kuetelabs/frontend/layouts/dashboard-layout';
 import { NotificationBell } from '@kuetelabs/frontend/features/notification/feature';
 import { provideAuthPages } from '@kuetelabs/frontend/features/auth/feature';
+import { provideErrorPages } from '@kuetelabs/frontend/layouts/error-layout';
 import { appRoutes } from './app.routes';
 
 /**
@@ -89,6 +90,12 @@ export const appConfig: ApplicationConfig = {
       oauthProviders: [],
     }),
     provideSupabase({ url: environment.supabaseUrl, anonKey: environment.supabaseAnonKey }),
+    // Copy and destinations for every screen under /error, plus the app-level 404.
+    provideErrorPages({
+      appName: 'Admin',
+      homePath: '/',
+      loginPath: '/auth/login',
+    }),
     { provide: USER_ADMIN_API_URL, useValue: environment.apiUrl },
     // Icons provided here merge with the layout's own set, so each app brings
     // the icons its navigation needs without touching the shared layout lib.

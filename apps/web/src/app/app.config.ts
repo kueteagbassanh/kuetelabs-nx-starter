@@ -11,6 +11,7 @@ import {
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideSupabase } from '@kuetelabs/frontend/data-access/supabase';
 import { provideAuthPages } from '@kuetelabs/frontend/features/auth/feature';
+import { provideErrorPages } from '@kuetelabs/frontend/layouts/error-layout';
 import { provideHlmSidebarConfig } from '@kuetelabs/frontend/ui/components/sidebar';
 import { environment } from '../environments/environment';
 import {
@@ -150,6 +151,12 @@ export const appConfig: ApplicationConfig = {
       redirectAfterLogin: '/',
       signupEnabled: true,
       oauthProviders: [],
+    }),
+    // Copy and destinations for every screen under /error, plus the app-level 404.
+    provideErrorPages({
+      appName: environment.appName,
+      homePath: '/',
+      loginPath: '/auth/login',
     }),
     provideHlmSidebarConfig({
       closeMobileSidebarOnMenuButtonClick: true,

@@ -617,6 +617,68 @@ in `app.config.ts` if an app mounts the auth screens somewhere other than `/auth
   how to start Supabase and where to paste the anon key, instead of letting a page construct a
   client and throw.
 
+## 7e. Error pages
+
+`libs/frontend/layouts/error-layout` owns every error screen: 400, 401, 403, 404, 408, 410, 429,
+500, 502, 503, 504, plus `offline`, `maintenance`, and a generic `unknown`.
+
+### One component, a catalog of data
+
+Unlike auth — where each screen has its own form, its own Supabase call, and its own failure
+modes — error screens differ only in wording and which two buttons they offer. So there is one
+`ErrorPage` component, and the per-status difference lives in `ERROR_CATALOG`: title, description,
+lucide glyph, tone, and a list of `ErrorAction`s. Routes are generated from that catalog, so adding
+a status is a single entry with no second place to update.
+
+Actions are a closed union (`home`, `back`, `retry`, `login`, `support`) rather than callbacks,
+which keeps the catalog serialisable and lets an app override copy through
+`provideErrorPages({ catalog: { ... } })` without handing out behaviour.
+
+### Why the pages live in the layout lib
+
+Auth pages were split out into a feature lib because they hold real logic and depend on
+`data-access`. Error pages hold none and depend on nothing but `type:ui` — so a separate feature lib
+would add a dependency edge and a barrel for no gain. `error-layout` imports nothing from
+`data-access` on purpose: these screens must still render in an app whose Supabase wiring is
+missing or broken, which is exactly when they are needed. That is also why `ERROR_PAGES_CONFIG`
+carries its own `loginPath` instead of reading `AUTH_NAVIGATION` — mirror the two by hand.
+
+### Mounting
+
+```ts
+{ path: 'error', children: errorRoutes },   // before the '' dashboard route
+// ...
+notFoundRoute(),                            // last
+```
+
+- **`/error` is declared before the dashboard.** The dashboard's `path: ''` prefix-matches every
+  URL, so a later `error` route would never be reached.
+- **404 renders in place.** `notFoundRoute()` is a `**` route rendering `ErrorPage`, not a redirect
+  to `/error/404`, so the address bar still shows the broken link the user needs to fix.
+- **403 is mounted inside the dashboard shell** at `AUTH_NAVIGATION.forbiddenPath` (`/forbidden`)
+  with `data: { inline: true }`. A signed-in user who lacks one permission keeps the navigation they
+  can still use, and `inline` swaps `min-h-svh` for `flex-1` so the content area does not grow its
+  own scrollbar.
+
+### Details that are easy to get wrong
+
+- **`/forbidden` must not be prerendered.** It sits behind `authenticatedGuard`, so prerendering
+  bakes a logged-out render and serves it to everyone — the same trap as `auth/**`. It is
+  `RenderMode.Client` in `app.routes.server.ts`. The `/error/*` screens need no session and stay
+  prerendered.
+- **Browser-only state is resolved after the first render.** `apps/web` prerenders these routes, so
+  deciding in the constructor whether to show "Go back" (`history.length`) would add a button the
+  server never emitted — a hydration mismatch. `ErrorPage` starts from the server's answer and fills
+  it in from `afterNextRender`. For the same reason "Reload" is rendered on the server too rather
+  than filtered out.
+- **Every route path is static.** `createErrorRoutes()` emits `error/404`, `error/500`, … instead of
+  `error/:code` so the SSR build can enumerate and prerender them. A param route would need
+  `getPrerenderParams` in the app's server routes. `ErrorPage.code` is a signal input, so an app that
+  wants `/error/:code` gets it for free under `withComponentInputBinding()` — at that cost.
+- **Nothing renders a button that cannot work.** `support` disappears without a `supportUrl`, `back`
+  disappears with no history behind it, and a `returnUrl` on the login action is honoured only when
+  it starts with a single `/` — the same open-redirect rule the auth guards use.
+
 ## 8. Shared contracts and generated types
 
 ```sh
