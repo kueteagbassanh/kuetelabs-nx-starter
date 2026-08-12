@@ -13,6 +13,7 @@ import { HlmCardImports } from '@kuetelabs/frontend/ui/components/card';
 import { HlmFieldImports } from '@kuetelabs/frontend/ui/components/field';
 import { HlmInputImports } from '@kuetelabs/frontend/ui/components/input';
 import { AuthStore } from '@kuetelabs/frontend/data-access/supabase';
+import { TranslocoDirective } from '@kuetelabs/frontend/ui/i18n';
 import { AUTH_PAGES_CONFIG } from '../auth.config';
 import { OauthButtons } from '../oauth-buttons';
 
@@ -28,6 +29,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
     ReactiveFormsModule,
     RouterLink,
     OauthButtons,
+    TranslocoDirective,
     ...HlmCardImports,
     ...HlmFieldImports,
     ...HlmInputImports,
@@ -35,17 +37,21 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <hlm-card>
+    <hlm-card *transloco="let t">
       <hlm-card-header>
-        <h1 hlmCardTitle>Create your {{ config.appName }} account</h1>
-        <p hlmCardDescription>You'll get a confirmation email to finish signing up.</p>
+        <h1 hlmCardTitle>{{ t('auth.signup.title', { app: config.appName }) }}</h1>
+        <p hlmCardDescription>{{ t('auth.signup.description') }}</p>
       </hlm-card-header>
 
       <div hlmCardContent class="flex flex-col gap-4">
         @if (sent()) {
+          <!-- Split around the address rather than interpolated into one string:
+               the <strong> has to sit mid-sentence, and the two halves let a
+               translation put it wherever that language needs it. -->
           <p class="text-sm">
-            Check <strong>{{ form.getRawValue().email }}</strong> for a confirmation link. You can
-            close this page.
+            {{ t('auth.signup.sentBefore') }}
+            <strong>{{ form.getRawValue().email }}</strong>
+            {{ t('auth.signup.sentAfter') }}
           </p>
         } @else {
           <lib-oauth-buttons [busy]="busy()" (chosen)="withProvider($event)" />
@@ -53,12 +59,12 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
           <form [formGroup]="form" (ngSubmit)="submit()">
             <hlm-field-group>
               <hlm-field>
-                <label hlmFieldLabel for="fullName">Full name</label>
+                <label hlmFieldLabel for="fullName">{{ t('auth.fields.fullName') }}</label>
                 <input hlmInput id="fullName" autocomplete="name" formControlName="fullName" />
               </hlm-field>
 
               <hlm-field>
-                <label hlmFieldLabel for="email">Email</label>
+                <label hlmFieldLabel for="email">{{ t('auth.fields.email') }}</label>
                 <input
                   hlmInput
                   id="email"
@@ -66,12 +72,16 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
                   autocomplete="email"
                   formControlName="email"
                 />
-                <hlm-field-error validator="required">Email is required.</hlm-field-error>
-                <hlm-field-error validator="email">Enter a valid email address.</hlm-field-error>
+                <hlm-field-error validator="required">
+                  {{ t('auth.fields.emailRequired') }}
+                </hlm-field-error>
+                <hlm-field-error validator="email">
+                  {{ t('auth.fields.emailInvalid') }}
+                </hlm-field-error>
               </hlm-field>
 
               <hlm-field>
-                <label hlmFieldLabel for="password">Password</label>
+                <label hlmFieldLabel for="password">{{ t('auth.fields.password') }}</label>
                 <input
                   hlmInput
                   id="password"
@@ -79,14 +89,18 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
                   autocomplete="new-password"
                   formControlName="password"
                 />
-                <hlm-field-error validator="required">Password is required.</hlm-field-error>
+                <hlm-field-error validator="required">
+                  {{ t('auth.fields.passwordRequired') }}
+                </hlm-field-error>
                 <hlm-field-error validator="minlength">
-                  At least {{ config.passwordMinLength }} characters.
+                  {{ t('auth.fields.passwordMinLength', { min: config.passwordMinLength }) }}
                 </hlm-field-error>
               </hlm-field>
 
               <hlm-field>
-                <label hlmFieldLabel for="confirmPassword">Confirm password</label>
+                <label hlmFieldLabel for="confirmPassword">
+                  {{ t('auth.fields.confirmPassword') }}
+                </label>
                 <input
                   hlmInput
                   id="confirmPassword"
@@ -97,14 +111,16 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
               </hlm-field>
 
               @if (form.errors?.['passwordMismatch'] && form.touched) {
-                <p class="text-destructive text-sm">Passwords do not match.</p>
+                <p class="text-destructive text-sm">
+                  {{ t('auth.fields.passwordsDoNotMatch') }}
+                </p>
               }
               @if (error(); as message) {
                 <p class="text-destructive text-sm" role="alert">{{ message }}</p>
               }
 
               <button hlmBtn type="submit" class="w-full" [disabled]="form.invalid || busy()">
-                {{ busy() ? 'Creating account…' : 'Create account' }}
+                {{ busy() ? t('auth.signup.submitting') : t('auth.signup.submit') }}
               </button>
             </hlm-field-group>
           </form>
@@ -112,8 +128,10 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
       </div>
 
       <div hlmCardFooter class="justify-center text-sm">
-        <span class="text-muted-foreground">Already have an account?</span>
-        <a class="ml-1 underline underline-offset-4" routerLink="../login">Sign in</a>
+        <span class="text-muted-foreground">{{ t('auth.signup.haveAccount') }}</span>
+        <a class="ml-1 underline underline-offset-4" routerLink="../login">
+          {{ t('auth.signup.signIn') }}
+        </a>
       </div>
     </hlm-card>
   `,

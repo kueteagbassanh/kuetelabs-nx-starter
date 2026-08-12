@@ -26,6 +26,7 @@ import {
   type SidebarConfig,
 } from '@kuetelabs/frontend/layouts/dashboard-layout';
 import { NotificationBell } from '@kuetelabs/frontend/features/notification/feature';
+import { LanguageSwitcher, provideI18n } from '@kuetelabs/frontend/ui/i18n';
 import { provideAuthPages } from '@kuetelabs/frontend/features/auth/feature';
 import { provideErrorPages } from '@kuetelabs/frontend/layouts/error-layout';
 import { appRoutes } from './app.routes';
@@ -81,6 +82,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes, withComponentInputBinding()),
     provideHttpClient(withFetch()),
+    // Runtime i18n. No SSR here, but the same cookie is used so a visitor's
+    // choice carries between `web` and `admin` on a shared domain.
+    ...provideI18n({ defaultLocale: 'en' }),
     // Admin is invite-only: no self-service signup, and OAuth stays off until the
     // provider credentials are configured in supabase/config.toml.
     provideAuthPages({
@@ -122,7 +126,13 @@ export const appConfig: ApplicationConfig = {
     }),
     { provide: DASHBOARD_MENU_CONFIG, useValue: adminMenu },
     // Rendered in the dashboard header. The layout knows nothing about
-    // notifications; it just renders whatever the app provides here.
-    { provide: DASHBOARD_HEADER_ACTIONS, useValue: supabaseReady ? [NotificationBell] : [] },
+    // notifications; it just renders whatever the app provides here. The
+    // switcher needs no backend, so unlike the bell it mounts unconditionally.
+    {
+      provide: DASHBOARD_HEADER_ACTIONS,
+      useValue: supabaseReady
+        ? [NotificationBell, LanguageSwitcher]
+        : [LanguageSwitcher],
+    },
   ],
 };

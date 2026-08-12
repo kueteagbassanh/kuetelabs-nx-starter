@@ -12,6 +12,7 @@ import { HlmCardImports } from '@kuetelabs/frontend/ui/components/card';
 import { HlmFieldImports } from '@kuetelabs/frontend/ui/components/field';
 import { HlmInputImports } from '@kuetelabs/frontend/ui/components/input';
 import { AuthStore } from '@kuetelabs/frontend/data-access/supabase';
+import { TranslocoDirective } from '@kuetelabs/frontend/ui/i18n';
 import { AUTH_PAGES_CONFIG } from '../auth.config';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
@@ -24,6 +25,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   selector: 'lib-reset-password-page',
   imports: [
     ReactiveFormsModule,
+    TranslocoDirective,
     ...HlmCardImports,
     ...HlmFieldImports,
     ...HlmInputImports,
@@ -31,14 +33,14 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <hlm-card>
+    <hlm-card *transloco="let t">
       <hlm-card-header>
-        <h1 hlmCardTitle>Choose a new password</h1>
+        <h1 hlmCardTitle>{{ t('auth.resetPassword.title') }}</h1>
         <p hlmCardDescription>
           {{
             hasSession()
-              ? 'Enter a new password for your account.'
-              : 'Open this page from the link in your email.'
+              ? t('auth.resetPassword.descriptionReady')
+              : t('auth.resetPassword.descriptionNoSession')
           }}
         </p>
       </hlm-card-header>
@@ -48,7 +50,9 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
           <form [formGroup]="form" (ngSubmit)="submit()">
             <hlm-field-group>
               <hlm-field>
-                <label hlmFieldLabel for="password">New password</label>
+                <label hlmFieldLabel for="password">
+                  {{ t('auth.resetPassword.newPassword') }}
+                </label>
                 <input
                   hlmInput
                   id="password"
@@ -56,14 +60,18 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
                   autocomplete="new-password"
                   formControlName="password"
                 />
-                <hlm-field-error validator="required">Password is required.</hlm-field-error>
+                <hlm-field-error validator="required">
+                  {{ t('auth.fields.passwordRequired') }}
+                </hlm-field-error>
                 <hlm-field-error validator="minlength">
-                  At least {{ config.passwordMinLength }} characters.
+                  {{ t('auth.fields.passwordMinLength', { min: config.passwordMinLength }) }}
                 </hlm-field-error>
               </hlm-field>
 
               <hlm-field>
-                <label hlmFieldLabel for="confirmPassword">Confirm password</label>
+                <label hlmFieldLabel for="confirmPassword">
+                  {{ t('auth.fields.confirmPassword') }}
+                </label>
                 <input
                   hlmInput
                   id="confirmPassword"
@@ -74,21 +82,22 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
               </hlm-field>
 
               @if (form.errors?.['passwordMismatch'] && form.touched) {
-                <p class="text-destructive text-sm">Passwords do not match.</p>
+                <p class="text-destructive text-sm">
+                  {{ t('auth.fields.passwordsDoNotMatch') }}
+                </p>
               }
               @if (error(); as message) {
                 <p class="text-destructive text-sm" role="alert">{{ message }}</p>
               }
 
               <button hlmBtn type="submit" class="w-full" [disabled]="form.invalid || busy()">
-                {{ busy() ? 'Saving…' : 'Save password' }}
+                {{ busy() ? t('auth.resetPassword.submitting') : t('auth.resetPassword.submit') }}
               </button>
             </hlm-field-group>
           </form>
         } @else {
           <p class="text-muted-foreground text-sm">
-            This page needs the recovery session created by the emailed link. Request a new link if
-            yours has expired.
+            {{ t('auth.resetPassword.needsRecoverySession') }}
           </p>
         }
       </div>

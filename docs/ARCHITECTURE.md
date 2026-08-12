@@ -679,6 +679,46 @@ notFoundRoute(),                            // last
   disappears with no history behind it, and a `returnUrl` on the login action is honoured only when
   it starts with a single `/` — the same open-redirect rule the auth guards use.
 
+## 7f. Internationalisation
+
+`libs/frontend/ui/i18n` — runtime i18n via **Transloco**, tagged `type:ui` so layouts, features and
+apps can all reach it. Full notes in that lib's README; the decisions worth knowing here:
+
+- **Runtime, not `$localize`.** Angular's built-in i18n compiles one bundle per language. With one
+  SSR server (`web`) and one SPA (`admin`), that would multiply the build matrix and the deployed
+  artefacts, and the language could not change without a full page load.
+- **The locale lives in a cookie.** SSR and the hydrating browser have to reach the *same* locale
+  independently or the first render is discarded. `localStorage` is invisible to the server, so it
+  can never do that; a cookie travels with the request. `resolveInitialLocale()` therefore reads the
+  cookie and nothing else — `document.cookie` in the browser, the `Cookie:` header via `REQUEST`
+  during SSR.
+- **`navigator.language` is adopted only after hydration**, and only when no cookie exists. Reading
+  it before the first render would produce an answer the server could not have produced. `LocaleStore`
+  handles it in `onInit`, by which point it is an ordinary language change on a stable DOM.
+- **During prerendering `document.cookie` throws** (`NotYetImplemented` on the server DOM shim) rather
+  than returning empty, which fails the build. The read is platform-gated for that reason. Prerendered
+  routes — `/error/*` and the landing pages — therefore ship in the default locale and switch during
+  hydration; give a route `RenderMode.Server` if that brief frame matters.
+- **Messages load through `import()`, not HTTP.** Transloco's stock loader fetches
+  `/assets/i18n/{lang}.json`, which would force the files out of the lib into every app's `assets`
+  glob, need an absolute URL for SSR to fetch its own origin, and need `TransferState` to avoid a
+  second download on the client. A dynamic import avoids all three and still emits one lazy chunk per
+  locale.
+- **`I18N_TRANSLATIONS` is multi-provided and deep-merged** in registration order, so an app can
+  override one key from a lib without restating the file. Scopes get their own lazy namespace.
+- **Data-driven copy uses `injectCopyResolver()`**, not the pipe — a catalog holds strings a template
+  cannot reach. It takes a fallback, which is also what lets `error-layout` render in an app that
+  never called `provideI18n()`. `ErrorPage`'s precedence is built-in English → translation → explicit
+  `provideErrorPages({ catalog })` override.
+- **Switching languages needs two things that are easy to miss**, and getting either wrong fails
+  silently — the page simply stays in the old language. `setActiveLang()` marks a language active but
+  does not fetch it, so `LocaleStore.setLocale()` calls `load()` as well; and `langChanges$` fires
+  *before* the new messages exist, so the copy resolver recomputes on `translationLoadSuccess` too.
+  Template-driven pages hide both bugs, because the `*transloco` directive loads on its own — only
+  catalog-driven pages expose them. Regression tests in `i18n.spec.ts` pin both.
+- **The lib imports nothing from `data-access`**, same rule as `error-layout`. Persisting a locale to
+  a user's profile therefore belongs in a feature lib that calls `LocaleStore.setLocale()`, not here.
+
 ## 8. Shared contracts and generated types
 
 ```sh

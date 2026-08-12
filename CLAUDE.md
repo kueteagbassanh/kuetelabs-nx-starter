@@ -154,6 +154,39 @@ returns an **array**, so spread it. Full notes in that lib's README.
 - Like `error-layout`, this lib imports nothing from `data-access` — the docs render with no
   Supabase configured. Anything needing a session goes in a `headerActions` component.
 
+## Internationalization
+
+`libs/frontend/ui/i18n` owns runtime i18n (**Transloco**), tagged `type:ui` so layouts, features and
+apps can all import it. Apps spread `...provideI18n({ defaultLocale: 'en' })`. Ships `en` + `fr` for
+the shared chrome — auth pages and every error screen. Full model in `docs/ARCHITECTURE.md` §7f and
+that lib's README.
+
+- **Import from `@kuetelabs/frontend/ui/i18n`, never `@jsverse/transloco` directly.** The barrel
+  re-exports `TranslocoDirective`, `TranslocoPipe`, `TranslocoService` and `translateSignal`.
+- **The locale lives in a cookie, not `localStorage`.** SSR and the hydrating client must resolve the
+  same locale independently or the first render is thrown away, and the server cannot see
+  `localStorage`. `resolveInitialLocale()` reads *only* the cookie on both platforms.
+- **Never read `navigator.language` before the first render.** The server cannot produce that answer.
+  `LocaleStore`'s `onInit` adopts it after hydration, only when no cookie exists, then writes one.
+- **The cookie read is platform-gated because `document.cookie` throws during prerendering**
+  (`NotYetImplemented`), which fails `nx build web`. Don't "simplify" it into an unconditional read.
+- **Prerendered routes (`/error/*`, landing) render in the default locale** and switch during
+  hydration — a prerendered file is served to every visitor. Use `RenderMode.Server` where that
+  matters.
+- **Translations load via `import()`, not HTTP**, so there are no `assets` globs, no absolute-URL SSR
+  fetch, and no `TransferState`. One lazy chunk per locale. Register files in
+  `translations/index.ts` and add a matching `LocaleDefinition`.
+- **Template text uses `*transloco`; data-driven copy uses `injectCopyResolver()`** — a catalog holds
+  strings a pipe cannot reach. The resolver takes a fallback, which is what lets `error-layout` keep
+  rendering in an app that never called `provideI18n()` (`TranslocoService` can't be probed with
+  `{ optional: true }` — its deps have no root factory, so injecting it there throws).
+- **`setActiveLang()` does not load a language** — `LocaleStore.setLocale()` calls `load()` too, and
+  the copy resolver recomputes on `translationLoadSuccess`, not just `langChanges$` (which fires
+  before the messages exist). Drop either half and a catalog-driven page stays in the old language
+  after a switch, with no error. Both are pinned by regression tests in `i18n.spec.ts`.
+- Locale labels are endonyms (`Français`, not `French`) and are never translated.
+- `provideI18nTesting()` + `loadI18n()` for tests; `TestBed` doesn't run app initializers.
+
 ## Notifications
 
 In-app center + toasts. `notifications` has no client insert policy — the API writes rows with the service_role key from the same hooks that audit RBAC changes (`libs/backend/notification`). Reads and mark-as-read go straight to Supabase under RLS; delivery is a Realtime subscription in `NotificationsStore`.

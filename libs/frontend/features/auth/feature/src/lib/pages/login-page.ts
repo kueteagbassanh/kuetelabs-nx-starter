@@ -7,6 +7,7 @@ import { HlmCardImports } from '@kuetelabs/frontend/ui/components/card';
 import { HlmFieldImports } from '@kuetelabs/frontend/ui/components/field';
 import { HlmInputImports } from '@kuetelabs/frontend/ui/components/input';
 import { AuthStore } from '@kuetelabs/frontend/data-access/supabase';
+import { TranslocoDirective } from '@kuetelabs/frontend/ui/i18n';
 import { AUTH_PAGES_CONFIG } from '../auth.config';
 import { OauthButtons } from '../oauth-buttons';
 
@@ -16,6 +17,7 @@ import { OauthButtons } from '../oauth-buttons';
     ReactiveFormsModule,
     RouterLink,
     OauthButtons,
+    TranslocoDirective,
     ...HlmCardImports,
     ...HlmFieldImports,
     ...HlmInputImports,
@@ -23,10 +25,10 @@ import { OauthButtons } from '../oauth-buttons';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <hlm-card>
+    <hlm-card *transloco="let t">
       <hlm-card-header>
-        <h1 hlmCardTitle>Sign in to {{ config.appName }}</h1>
-        <p hlmCardDescription>Enter your email and password to continue.</p>
+        <h1 hlmCardTitle>{{ t('auth.login.title', { app: config.appName }) }}</h1>
+        <p hlmCardDescription>{{ t('auth.login.description') }}</p>
       </hlm-card-header>
 
       <div hlmCardContent class="flex flex-col gap-4">
@@ -35,27 +37,31 @@ import { OauthButtons } from '../oauth-buttons';
         <form [formGroup]="form" (ngSubmit)="submit()">
           <hlm-field-group>
             <hlm-field>
-              <label hlmFieldLabel for="email">Email</label>
+              <label hlmFieldLabel for="email">{{ t('auth.fields.email') }}</label>
               <input
                 hlmInput
                 id="email"
                 type="email"
                 autocomplete="email"
-                placeholder="you@example.com"
+                [placeholder]="t('auth.fields.emailPlaceholder')"
                 formControlName="email"
               />
-              <hlm-field-error validator="required">Email is required.</hlm-field-error>
-              <hlm-field-error validator="email">Enter a valid email address.</hlm-field-error>
+              <hlm-field-error validator="required">
+                {{ t('auth.fields.emailRequired') }}
+              </hlm-field-error>
+              <hlm-field-error validator="email">
+                {{ t('auth.fields.emailInvalid') }}
+              </hlm-field-error>
             </hlm-field>
 
             <hlm-field>
               <div class="flex items-center">
-                <label hlmFieldLabel for="password">Password</label>
+                <label hlmFieldLabel for="password">{{ t('auth.fields.password') }}</label>
                 <a
                   class="ml-auto text-sm underline-offset-4 hover:underline"
                   routerLink="../forgot-password"
                 >
-                  Forgot password?
+                  {{ t('auth.login.forgotPassword') }}
                 </a>
               </div>
               <input
@@ -65,7 +71,9 @@ import { OauthButtons } from '../oauth-buttons';
                 autocomplete="current-password"
                 formControlName="password"
               />
-              <hlm-field-error validator="required">Password is required.</hlm-field-error>
+              <hlm-field-error validator="required">
+                {{ t('auth.fields.passwordRequired') }}
+              </hlm-field-error>
             </hlm-field>
 
             @if (error(); as message) {
@@ -73,7 +81,7 @@ import { OauthButtons } from '../oauth-buttons';
             }
 
             <button hlmBtn type="submit" class="w-full" [disabled]="form.invalid || busy()">
-              {{ busy() ? 'Signing in…' : 'Sign in' }}
+              {{ busy() ? t('auth.login.submitting') : t('auth.login.submit') }}
             </button>
           </hlm-field-group>
         </form>
@@ -81,8 +89,10 @@ import { OauthButtons } from '../oauth-buttons';
 
       @if (config.signupEnabled) {
         <div hlmCardFooter class="justify-center text-sm">
-          <span class="text-muted-foreground">No account?</span>
-          <a class="ml-1 underline underline-offset-4" routerLink="../signup">Create one</a>
+          <span class="text-muted-foreground">{{ t('auth.login.noAccount') }}</span>
+          <a class="ml-1 underline underline-offset-4" routerLink="../signup">
+            {{ t('auth.login.createOne') }}
+          </a>
         </div>
       }
     </hlm-card>

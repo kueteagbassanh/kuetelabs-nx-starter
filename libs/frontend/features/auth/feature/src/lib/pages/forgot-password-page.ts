@@ -6,12 +6,14 @@ import { HlmCardImports } from '@kuetelabs/frontend/ui/components/card';
 import { HlmFieldImports } from '@kuetelabs/frontend/ui/components/field';
 import { HlmInputImports } from '@kuetelabs/frontend/ui/components/input';
 import { AuthStore } from '@kuetelabs/frontend/data-access/supabase';
+import { TranslocoDirective } from '@kuetelabs/frontend/ui/i18n';
 
 @Component({
   selector: 'lib-forgot-password-page',
   imports: [
     ReactiveFormsModule,
     RouterLink,
+    TranslocoDirective,
     ...HlmCardImports,
     ...HlmFieldImports,
     ...HlmInputImports,
@@ -19,23 +21,24 @@ import { AuthStore } from '@kuetelabs/frontend/data-access/supabase';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <hlm-card>
+    <hlm-card *transloco="let t">
       <hlm-card-header>
-        <h1 hlmCardTitle>Reset your password</h1>
-        <p hlmCardDescription>We'll email you a link to choose a new one.</p>
+        <h1 hlmCardTitle>{{ t('auth.forgotPassword.title') }}</h1>
+        <p hlmCardDescription>{{ t('auth.forgotPassword.description') }}</p>
       </hlm-card-header>
 
       <div hlmCardContent>
         @if (sent()) {
           <p class="text-sm">
-            If an account exists for <strong>{{ form.getRawValue().email }}</strong>, a reset link is
-            on its way. The link expires in one hour.
+            {{ t('auth.forgotPassword.sentBefore') }}
+            <strong>{{ form.getRawValue().email }}</strong
+            >{{ t('auth.forgotPassword.sentAfter') }}
           </p>
         } @else {
           <form [formGroup]="form" (ngSubmit)="submit()">
             <hlm-field-group>
               <hlm-field>
-                <label hlmFieldLabel for="email">Email</label>
+                <label hlmFieldLabel for="email">{{ t('auth.fields.email') }}</label>
                 <input
                   hlmInput
                   id="email"
@@ -43,8 +46,12 @@ import { AuthStore } from '@kuetelabs/frontend/data-access/supabase';
                   autocomplete="email"
                   formControlName="email"
                 />
-                <hlm-field-error validator="required">Email is required.</hlm-field-error>
-                <hlm-field-error validator="email">Enter a valid email address.</hlm-field-error>
+                <hlm-field-error validator="required">
+                  {{ t('auth.fields.emailRequired') }}
+                </hlm-field-error>
+                <hlm-field-error validator="email">
+                  {{ t('auth.fields.emailInvalid') }}
+                </hlm-field-error>
               </hlm-field>
 
               @if (error(); as message) {
@@ -52,7 +59,7 @@ import { AuthStore } from '@kuetelabs/frontend/data-access/supabase';
               }
 
               <button hlmBtn type="submit" class="w-full" [disabled]="form.invalid || busy()">
-                {{ busy() ? 'Sending…' : 'Send reset link' }}
+                {{ busy() ? t('auth.forgotPassword.submitting') : t('auth.forgotPassword.submit') }}
               </button>
             </hlm-field-group>
           </form>
@@ -60,7 +67,9 @@ import { AuthStore } from '@kuetelabs/frontend/data-access/supabase';
       </div>
 
       <div hlmCardFooter class="justify-center text-sm">
-        <a class="underline underline-offset-4" routerLink="../login">Back to sign in</a>
+        <a class="underline underline-offset-4" routerLink="../login">
+          {{ t('auth.forgotPassword.backToLogin') }}
+        </a>
       </div>
     </hlm-card>
   `,

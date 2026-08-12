@@ -39,6 +39,7 @@ import {
 import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
 import { HlmEmptyImports } from '@kuetelabs/frontend/ui/components/empty';
 import { HlmIcon } from '@kuetelabs/frontend/ui/components/icon';
+import { injectCopyResolver } from '@kuetelabs/frontend/ui/i18n';
 import { ErrorContainer } from './error-container';
 import { ERROR_CATALOG, resolveErrorCode } from './error.catalog';
 import { ERROR_PAGES_CONFIG } from './error.config';
@@ -121,7 +122,7 @@ const ACTION_ICONS: Record<ErrorAction['kind'], string> = {
               role="status"
               aria-live="polite"
             >
-              {{ online() ? "You're back online — try again." : 'Still no connection.' }}
+              {{ connectionLabel() }}
             </p>
           }
 
@@ -212,16 +213,63 @@ export class ErrorPage {
    */
   private readonly canGoBack = signal(false);
 
+  /**
+   * Translations for the catalog, which holds plain strings a template pipe
+   * cannot reach. Falls through to the built-in English when the app never
+   * called `provideI18n()` — this lib has to render in an unconfigured app.
+   */
+  private readonly copy = injectCopyResolver();
+
+  /**
+   * Built-in English, then the translation, then an explicit per-app override —
+   * in that order of increasing authority. An app that hard-codes copy through
+   * `provideErrorPages({ catalog })` means it, so that wins over the catalogue's
+   * translation; everything it left alone gets translated normally.
+   */
   protected readonly definition = computed<ErrorDefinition>(() => {
-    const base = ERROR_CATALOG[this.code()];
-    const override = this.config.catalog[this.code()];
-    return override ? { ...base, ...override } : base;
+    const code = this.code();
+    const base = ERROR_CATALOG[code];
+    const override = this.config.catalog[code];
+    const t = this.copy();
+
+    return {
+      ...base,
+      ...override,
+      title: override?.title ?? t(`errors.${code}.title`, base.title),
+      description:
+        override?.description ??
+        t(`errors.${code}.description`, base.description),
+      hint:
+        override?.hint ??
+        (base.hint ? t(`errors.${code}.hint`, base.hint) : undefined),
+      // Only translate the built-in buttons: a custom action list is the app's
+      // own copy, and its labels are not in this lib's message files.
+      actions: override?.actions
+        ? override.actions
+        : base.actions.map((action) => ({
+            ...action,
+            label: t(`errors.${code}.actions.${action.kind}`, action.label),
+          })),
+    };
   });
 
   protected readonly statusLabel = computed(() => {
     const status = this.definition().status;
-    return this.config.showStatusCode && status ? `Error ${status}` : '';
+    if (!this.config.showStatusCode || !status) {
+      return '';
+    }
+    return this.copy()('errors.status', `Error ${status}`, { code: status });
   });
+
+  /** Live connection state on the offline screen; changes without a navigation. */
+  protected readonly connectionLabel = computed(() =>
+    this.online()
+      ? this.copy()(
+          'errors.offlineStatus.online',
+          "You're back online — try again.",
+        )
+      : this.copy()('errors.offlineStatus.offline', 'Still no connection.'),
+  );
 
   /** Drops actions that cannot work here: no support URL, no history to go back to. */
   protected readonly actions = computed(() =>

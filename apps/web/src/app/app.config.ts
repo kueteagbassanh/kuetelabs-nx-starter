@@ -20,8 +20,10 @@ import {
 import { provideAuthPages } from '@kuetelabs/frontend/features/auth/feature';
 import { provideErrorPages } from '@kuetelabs/frontend/layouts/error-layout';
 import { provideHlmSidebarConfig } from '@kuetelabs/frontend/ui/components/sidebar';
+import { LanguageSwitcher, provideI18n } from '@kuetelabs/frontend/ui/i18n';
 import { environment } from '../environments/environment';
 import {
+  DASHBOARD_HEADER_ACTIONS,
   DASHBOARD_MENU_CONFIG,
   type SidebarConfig,
 } from '@kuetelabs/frontend/layouts/dashboard-layout';
@@ -193,6 +195,9 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
     provideHttpClient(withFetch()),
+    // Runtime i18n. The locale rides in a cookie so this SSR render and the
+    // hydrating client agree on it — see the i18n lib's README.
+    ...provideI18n({ defaultLocale: 'en' }),
     provideSupabase({
       url: environment.supabaseUrl,
       anonKey: environment.supabaseAnonKey,
@@ -233,6 +238,7 @@ export const appConfig: ApplicationConfig = {
     }),
     // 🔥 Tell the layout engine to use this specific array for this app instance
     { provide: DASHBOARD_MENU_CONFIG, useValue: dashboardMenu },
+    { provide: DASHBOARD_HEADER_ACTIONS, useValue: [LanguageSwitcher] },
     // Same idea for the public shell: all marketing copy comes from this object.
     provideLandingLayout(landingConfig),
     // Returns an array of providers, so it is spread rather than pushed.
@@ -244,6 +250,7 @@ export const appConfig: ApplicationConfig = {
         'https://github.com/kueteagbassanh/kuetelabs-nx-starter/edit/main/apps/web/src/app/pages',
       editFileExtension: '.ts',
       navigation: docsNavigation,
+      headerActions: [LanguageSwitcher],
     }),
   ],
 };
