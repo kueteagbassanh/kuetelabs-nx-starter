@@ -2,7 +2,11 @@ import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withInMemoryScrolling,
+} from '@angular/router';
 import { appRoutes } from './app.routes';
 import {
   provideClientHydration,
@@ -21,6 +25,8 @@ import {
   provideDocsLayout,
   type DocsNavConfig,
 } from '@kuetelabs/frontend/layouts/docs-layout';
+import { provideLandingLayout } from '@kuetelabs/frontend/layouts/landing-layout';
+import { landingConfig } from './landing.config';
 
 // Paths are absolute route paths: the sidebar hands them to routerLink and the
 // pager matches them against the router URL.
@@ -173,7 +179,15 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideClientHydration(withEventReplay()),
     provideBrowserGlobalErrorListeners(),
-    provideRouter(appRoutes, withComponentInputBinding()),
+    // `anchorScrolling` is what makes the header's `/#features` style links work.
+    provideRouter(
+      appRoutes,
+      withComponentInputBinding(),
+      withInMemoryScrolling({
+        anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'enabled',
+      }),
+    ),
     provideHttpClient(withFetch()),
     provideSupabase({
       url: environment.supabaseUrl,
@@ -198,6 +212,8 @@ export const appConfig: ApplicationConfig = {
     }),
     // 🔥 Tell the layout engine to use this specific array for this app instance
     { provide: DASHBOARD_MENU_CONFIG, useValue: dashboardMenu },
+    // Same idea for the public shell: all marketing copy comes from this object.
+    provideLandingLayout(landingConfig),
     // Returns an array of providers, so it is spread rather than pushed.
     ...provideDocsLayout({
       title: environment.appName,

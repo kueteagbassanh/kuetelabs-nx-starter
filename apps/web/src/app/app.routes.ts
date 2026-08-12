@@ -4,7 +4,13 @@ import { authRoutes } from '@kuetelabs/frontend/features/auth/feature';
 import { authenticatedGuard } from '@kuetelabs/frontend/data-access/supabase';
 import { DashboardLayout } from '@kuetelabs/frontend/layouts/dashboard-layout';
 import { DocsLayout } from '@kuetelabs/frontend/layouts/docs-layout';
+import { LandingLayout } from '@kuetelabs/frontend/layouts/landing-layout';
 
+/**
+ * `web` is the public site: the marketing shell owns `/`, and the signed-in
+ * dashboard moved to `/dashboard` — which is where `dashboardMenu` in
+ * `app.config.ts` already pointed.
+ */
 export const appRoutes: Route[] = [
   {
     path: 'auth',
@@ -12,8 +18,8 @@ export const appRoutes: Route[] = [
     children: authRoutes,
   },
   {
-    // Public docs, mounted before the '' dashboard route below — that one
-    // prefix-matches everything. The tree comes from provideDocsLayout().
+    // Public docs. Mounted before the '' landing shell, which prefix-matches
+    // every URL; the tree comes from provideDocsLayout().
     path: 'docs',
     component: DocsLayout,
     children: [
@@ -31,8 +37,23 @@ export const appRoutes: Route[] = [
     ],
   },
   {
-    // Everything behind the dashboard requires a session.
     path: '',
+    component: LandingLayout,
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/landing/landing').then((m) => m.Landing),
+      },
+      {
+        path: 'contact',
+        loadComponent: () => import('./pages/contact').then((m) => m.Contact),
+      },
+    ],
+  },
+  {
+    // Everything behind the dashboard requires a session.
+    path: 'dashboard',
     component: DashboardLayout,
     canActivate: [authenticatedGuard],
     children: [
