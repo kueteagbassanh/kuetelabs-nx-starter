@@ -101,7 +101,9 @@ export class DocsToc {
   private spyQueued = false;
 
   constructor() {
-    if (!this.isBrowser) {
+    // Nothing to scan on the server, and nothing to watch when the app turned the
+    // rail off — no observer, no scroll listener.
+    if (!this.isBrowser || !this.config.tocEnabled) {
       return;
     }
 

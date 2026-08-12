@@ -95,11 +95,16 @@ import { DocsPager } from './components/docs-pager';
         }
       </main>
 
-      <aside
-        class="sticky top-14 hidden h-[calc(100svh-3.5rem)] w-56 shrink-0 overflow-y-auto py-8 xl:block"
-      >
-        <lib-docs-toc [contentHost]="contentEl()?.nativeElement ?? null" />
-      </aside>
+      <!-- The column stays reserved across pages so the article does not change
+           width when a page has too few headings to fill it — but an app that turns
+           the rail off gets the space back. -->
+      @if (config.tocEnabled) {
+        <aside
+          class="sticky top-14 hidden h-[calc(100svh-3.5rem)] w-56 shrink-0 overflow-y-auto py-8 xl:block"
+        >
+          <lib-docs-toc [contentHost]="contentEl()?.nativeElement ?? null" />
+        </aside>
+      }
     </div>
   `,
 })

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowLeft, lucideArrowRight } from '@ng-icons/lucide';
@@ -56,10 +61,18 @@ import { DocsNavStore } from '../docs-nav.store';
     }
   `,
   host: {
-    class: 'grid gap-4 sm:grid-cols-2',
-    '[class.hidden]': '!docsNav.previousPage() && !docsNav.nextPage()',
+    // `grid` and `hidden` are both display utilities, so leaving both in the static
+    // class list would let Tailwind's output order decide which wins. Bind them as
+    // mutually exclusive instead.
+    class: 'gap-4 sm:grid-cols-2',
+    '[class.grid]': 'hasNeighbours()',
+    '[class.hidden]': '!hasNeighbours()',
   },
 })
 export class DocsPager {
   protected readonly docsNav = inject(DocsNavStore);
+
+  protected readonly hasNeighbours = computed(
+    () => !!this.docsNav.previousPage() || !!this.docsNav.nextPage(),
+  );
 }
