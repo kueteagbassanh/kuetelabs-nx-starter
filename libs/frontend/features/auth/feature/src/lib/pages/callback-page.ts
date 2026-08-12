@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
 import { HlmCardImports } from '@kuetelabs/frontend/ui/components/card';
 import { AuthStore } from '@kuetelabs/frontend/data-access/supabase';
+import { TranslocoDirective } from '@kuetelabs/frontend/ui/i18n';
 import { AUTH_PAGES_CONFIG } from '../auth.config';
 
 /**
@@ -11,20 +12,24 @@ import { AUTH_PAGES_CONFIG } from '../auth.config';
  */
 @Component({
   selector: 'lib-callback-page',
-  imports: [RouterLink, ...HlmCardImports, ...HlmButtonImports],
+  imports: [RouterLink, TranslocoDirective, ...HlmCardImports, ...HlmButtonImports],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <hlm-card>
+    <hlm-card *transloco="let t">
       <hlm-card-header>
-        <h1 hlmCardTitle>{{ error() ? 'Sign-in failed' : 'Signing you in…' }}</h1>
-        <p hlmCardDescription>
-          {{ error() ?? 'One moment while we finish setting up your session.' }}
-        </p>
+        <h1 hlmCardTitle>
+          {{ error() ? t('auth.callback.failedTitle') : t('auth.callback.title') }}
+        </h1>
+        <!-- The provider's own error text is passed through untranslated: it comes
+             from Supabase at runtime and has no key in these files. -->
+        <p hlmCardDescription>{{ error() ?? t('auth.callback.description') }}</p>
       </hlm-card-header>
 
       @if (error()) {
         <div hlmCardContent>
-          <a hlmBtn variant="outline" class="w-full" routerLink="../login">Back to sign in</a>
+          <a hlmBtn variant="outline" class="w-full" routerLink="../login">
+            {{ t('auth.callback.backToLogin') }}
+          </a>
         </div>
       }
     </hlm-card>

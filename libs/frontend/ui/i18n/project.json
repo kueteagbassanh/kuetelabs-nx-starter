@@ -1,0 +1,22 @@
+{
+  "name": "i18n",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/ui/i18n/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": ["platform:frontend", "type:ui"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false,
+        "tsConfig": "libs/frontend/ui/i18n/tsconfig.spec.json",
+        "include": ["libs/frontend/ui/i18n/src/**/*.spec.ts"],
+        "buildTarget": "web:build:development"
+      }
+    }
+  }
+}

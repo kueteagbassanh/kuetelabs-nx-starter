@@ -1,0 +1,158 @@
+{
+  "common": {
+    "language": "Langue",
+    "selectLanguage": "Choisir la langue",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "loading": "Chargement…"
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion à {{app}}",
+      "description": "Saisissez votre e-mail et votre mot de passe pour continuer.",
+      "submit": "Se connecter",
+      "submitting": "Connexion…",
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Pas encore de compte ?",
+      "createOne": "En créer un"
+    },
+    "signup": {
+      "title": "Créer votre compte {{app}}",
+      "description": "Vous recevrez un e-mail de confirmation pour finaliser votre inscription.",
+      "sentBefore": "Consultez",
+      "sentAfter": "pour y trouver le lien de confirmation. Vous pouvez fermer cette page.",
+      "submit": "Créer le compte",
+      "submitting": "Création du compte…",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter"
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser votre mot de passe",
+      "description": "Nous vous enverrons un lien par e-mail pour en choisir un nouveau.",
+      "sentBefore": "Si un compte existe pour",
+      "sentAfter": ", un lien de réinitialisation est en route. Ce lien expire dans une heure.",
+      "submit": "Envoyer le lien",
+      "submitting": "Envoi…",
+      "backToLogin": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Choisir un nouveau mot de passe",
+      "descriptionReady": "Saisissez un nouveau mot de passe pour votre compte.",
+      "descriptionNoSession": "Ouvrez cette page depuis le lien reçu par e-mail.",
+      "newPassword": "Nouveau mot de passe",
+      "submit": "Enregistrer le mot de passe",
+      "submitting": "Enregistrement…",
+      "needsRecoverySession": "Cette page nécessite la session de récupération créée par le lien envoyé par e-mail. Demandez un nouveau lien si le vôtre a expiré."
+    },
+    "callback": {
+      "title": "Connexion en cours…",
+      "failedTitle": "Échec de la connexion",
+      "description": "Un instant, nous finalisons votre session.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "setup": {
+      "title": "Supabase n'est pas encore configuré",
+      "description": "L'authentification a besoin d'une URL de projet et d'une clé anon pour fonctionner.",
+      "stepRun": "Exécutez",
+      "stepCopyBefore": "Copiez la",
+      "stepCopyMiddle": "affichée dans",
+      "stepRestart": "Redémarrez le serveur de développement",
+      "anonKeyNote": "La clé anon est publique par conception — c'est la sécurité au niveau des lignes (RLS) qui protège les données, pas le secret de cette clé."
+    },
+    "fields": {
+      "fullName": "Nom complet",
+      "email": "E-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "emailRequired": "L'e-mail est obligatoire.",
+      "emailInvalid": "Saisissez une adresse e-mail valide.",
+      "password": "Mot de passe",
+      "passwordRequired": "Le mot de passe est obligatoire.",
+      "passwordMinLength": "Au moins {{min}} caractères.",
+      "confirmPassword": "Confirmer le mot de passe",
+      "passwordsDoNotMatch": "Les mots de passe ne correspondent pas."
+    },
+    "oauth": {
+      "continueWith": "Continuer avec {{provider}}",
+      "or": "ou"
+    }
+  },
+  "errors": {
+    "status": "Erreur {{code}}",
+    "offlineStatus": {
+      "online": "Vous êtes de nouveau en ligne — réessayez.",
+      "offline": "Toujours aucune connexion."
+    },
+    "400": {
+      "title": "Cette requête n'avait pas de sens",
+      "description": "Le serveur n'a pas pu lire la requête. C'est généralement le signe d'un lien modifié à la main ou d'un formulaire envoyé deux fois.",
+      "actions": { "back": "Retour", "home": "Accueil" }
+    },
+    "401": {
+      "title": "Vous devez vous connecter",
+      "description": "Cette page est réservée aux comptes connectés. Votre session a peut-être simplement expiré pendant que l'onglet était ouvert.",
+      "actions": { "login": "Se connecter", "home": "Accueil" }
+    },
+    "403": {
+      "title": "Accès non autorisé",
+      "description": "Votre compte ne dispose pas de la permission requise pour cette page. Si cela vous semble incorrect, demandez à un administrateur de vérifier vos rôles.",
+      "hint": "Si un rôle vient de vous être accordé, déconnectez-vous puis reconnectez-vous — les permissions voyagent dans le jeton d'accès.",
+      "actions": { "home": "Retour à l'accueil", "login": "Utiliser un autre compte" }
+    },
+    "404": {
+      "title": "Page introuvable",
+      "description": "La page demandée n'existe pas. Elle a pu être renommée ou supprimée, ou le lien qui vous a amené ici n'est plus à jour.",
+      "actions": { "home": "Retour à l'accueil", "back": "Retour" }
+    },
+    "408": {
+      "title": "La requête a expiré",
+      "description": "Le serveur a mis trop de temps à répondre. Une connexion lente ou instable en est la cause habituelle.",
+      "actions": { "retry": "Réessayer", "home": "Accueil" }
+    },
+    "410": {
+      "title": "Cette page n'existe plus",
+      "description": "La ressource se trouvait ici et a été supprimée définitivement. Il n'y a aucune nouvelle adresse vers laquelle vous rediriger.",
+      "actions": { "home": "Retour à l'accueil", "back": "Retour" }
+    },
+    "429": {
+      "title": "Trop de requêtes",
+      "description": "Vous avez atteint une limite de débit. Patientez un instant avant de réessayer — les tentatives répétées prolongent la limite.",
+      "actions": { "retry": "Réessayer", "home": "Accueil" }
+    },
+    "500": {
+      "title": "Un problème est survenu de notre côté",
+      "description": "Une erreur inattendue a empêché le chargement de cette page. Vous n'y êtes pour rien, et l'incident a été enregistré.",
+      "actions": { "retry": "Recharger", "home": "Accueil", "support": "Contacter le support" }
+    },
+    "502": {
+      "title": "Passerelle incorrecte",
+      "description": "Un service dont dépend cette page a renvoyé une réponse invalide. Il s'agit généralement d'un déploiement en cours, qui se résout tout seul.",
+      "actions": { "retry": "Réessayer", "home": "Accueil" }
+    },
+    "503": {
+      "title": "Temporairement indisponible",
+      "description": "Le service est interrompu pour un court moment. Il devrait revenir sans aucune action de votre part.",
+      "actions": { "retry": "Réessayer", "support": "Voir l'état du service" }
+    },
+    "504": {
+      "title": "Délai de la passerelle dépassé",
+      "description": "Un service en amont n'a pas répondu à temps. Cela se résout généralement en une minute ou deux.",
+      "actions": { "retry": "Réessayer", "home": "Accueil" }
+    },
+    "offline": {
+      "title": "Vous êtes hors ligne",
+      "description": "Cet appareil n'a aucune connexion réseau, la page n'a donc pas pu être chargée. La page vous préviendra dès que la connexion sera rétablie.",
+      "actions": { "retry": "Réessayer" }
+    },
+    "maintenance": {
+      "title": "Maintenance en cours",
+      "description": "Nous effectuons une modification planifiée et revenons très vite. Rien n'est perdu — vos données sont intactes.",
+      "actions": { "retry": "Réessayer", "support": "Voir l'état du service" }
+    },
+    "unknown": {
+      "title": "Un problème est survenu",
+      "description": "Nous n'avons pas pu déterminer ce qui a échoué. Recharger règle la plupart des cas ; sinon, le lien est peut-être cassé.",
+      "actions": { "retry": "Recharger", "home": "Accueil" }
+    }
+  }
+}

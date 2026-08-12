@@ -8,6 +8,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "resolveJsonModule": true,
     "target": "es2015",
     "module": "esnext",
     "lib": [
@@ -196,6 +197,9 @@
       ],
       "@kuetelabs/frontend/ui/charts": [
         "./libs/frontend/ui/charts/src/index.ts"
+      ],
+      "@kuetelabs/frontend/ui/i18n": [
+        "./libs/frontend/ui/i18n/src/index.ts"
       ],
       "@kuetelabs/shared/database-types": [
         "./libs/shared/database-types/src/index.ts"

@@ -6,6 +6,38 @@
 
 [Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
 
+## Local Supabase
+
+Auth, RLS-protected data, realtime, and the RBAC schema all run against a local
+Supabase stack. Bring it up with:
+
+```sh
+tools/supabase-local.sh            # start, apply pending migrations, sync .env, regenerate DB types
+tools/supabase-local.sh --reset    # also wipe the local DB and re-run supabase/seed.sql
+```
+
+It needs Docker. If the daemon is unreachable because your user is not in the
+`docker` group:
+
+```sh
+sudo usermod -aG docker "$USER"
+newgrp docker            # or log out and back in
+```
+
+The script writes `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and
+`SUPABASE_SERVICE_ROLE_KEY` into `.env` (read by `apps/api`) and regenerates
+`libs/shared/database-types`. The Angular apps cannot read `.env` — the anon key
+is a literal in `apps/*/src/environments/environment.ts` — so the script warns
+instead if those drift.
+
+Roles are service_role-only, so the first admin grant cannot come from the app.
+After signing up, run the `insert into public.user_roles` snippet the script
+prints, then sign out and back in: permissions are stamped into the JWT at token
+issue time.
+
+Local mail (confirmations, invites, recovery) lands in Inbucket at
+http://127.0.0.1:54324; Studio is at http://127.0.0.1:54323.
+
 ## Run tasks
 
 To run the dev server for your app, use:

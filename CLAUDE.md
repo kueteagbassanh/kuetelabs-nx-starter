@@ -107,6 +107,30 @@ Component conventions (see `libs/frontend/ui/components/button`):
   `returnUrl` is accepted only when it starts with a single `/` — otherwise login is an open
   redirect. See `docs/ARCHITECTURE.md` §7d.
 
+## Error pages
+
+`libs/frontend/layouts/error-layout` holds every error screen — 400, 401, 403, 404, 408, 410, 429,
+500, 502, 503, 504, `offline`, `maintenance`, and a generic `unknown` fallback. Unlike auth, the
+pages stay in the layout lib: they hold no logic and depend on nothing but `type:ui`. Full model in
+`docs/ARCHITECTURE.md` §7e.
+
+- **One `ErrorPage` component; the difference between screens is data in `ERROR_CATALOG`.** Add a
+  status by adding a catalog entry — `createErrorRoutes()` generates the route from it. Don't write
+  a component per status.
+- Apps compose `{ path: 'error', children: errorRoutes }` **before** the `''` dashboard route (which
+  prefix-matches everything) and `notFoundRoute()` last. 404 renders in place rather than
+  redirecting, so the broken URL stays in the address bar.
+- `/forbidden` (`AUTH_NAVIGATION.forbiddenPath`) is mounted inside the dashboard shell with
+  `data: { code: 403, inline: true }` — `inline` swaps `min-h-svh` for `flex-1`. It is
+  `RenderMode.Client` in `app.routes.server.ts`: it is behind `authenticatedGuard`, so prerendering
+  it ships a logged-out render, exactly as with `auth/**`.
+- **`web` prerenders `/error/*`, so nothing browser-only may change the DOM during hydration.**
+  "Go back" depends on `history.length` and is resolved in `afterNextRender`, not the constructor.
+  Route paths are static for the same reason — `error/:code` would need `getPrerenderParams`.
+- The lib imports nothing from `data-access` on purpose, so these screens still render when Supabase
+  is missing or broken. `ERROR_PAGES_CONFIG.loginPath` therefore mirrors `AUTH_NAVIGATION.loginPath`
+  by hand — keep the two in step.
+
 ## Docs pages
 
 `libs/frontend/layouts/docs-layout` is the documentation shell: sticky header, sidebar tree,
@@ -129,6 +153,39 @@ returns an **array**, so spread it. Full notes in that lib's README.
   not class order in the attribute.
 - Like `error-layout`, this lib imports nothing from `data-access` — the docs render with no
   Supabase configured. Anything needing a session goes in a `headerActions` component.
+
+## Internationalization
+
+`libs/frontend/ui/i18n` owns runtime i18n (**Transloco**), tagged `type:ui` so layouts, features and
+apps can all import it. Apps spread `...provideI18n({ defaultLocale: 'en' })`. Ships `en` + `fr` for
+the shared chrome — auth pages and every error screen. Full model in `docs/ARCHITECTURE.md` §7f and
+that lib's README.
+
+- **Import from `@kuetelabs/frontend/ui/i18n`, never `@jsverse/transloco` directly.** The barrel
+  re-exports `TranslocoDirective`, `TranslocoPipe`, `TranslocoService` and `translateSignal`.
+- **The locale lives in a cookie, not `localStorage`.** SSR and the hydrating client must resolve the
+  same locale independently or the first render is thrown away, and the server cannot see
+  `localStorage`. `resolveInitialLocale()` reads *only* the cookie on both platforms.
+- **Never read `navigator.language` before the first render.** The server cannot produce that answer.
+  `LocaleStore`'s `onInit` adopts it after hydration, only when no cookie exists, then writes one.
+- **The cookie read is platform-gated because `document.cookie` throws during prerendering**
+  (`NotYetImplemented`), which fails `nx build web`. Don't "simplify" it into an unconditional read.
+- **Prerendered routes (`/error/*`, landing) render in the default locale** and switch during
+  hydration — a prerendered file is served to every visitor. Use `RenderMode.Server` where that
+  matters.
+- **Translations load via `import()`, not HTTP**, so there are no `assets` globs, no absolute-URL SSR
+  fetch, and no `TransferState`. One lazy chunk per locale. Register files in
+  `translations/index.ts` and add a matching `LocaleDefinition`.
+- **Template text uses `*transloco`; data-driven copy uses `injectCopyResolver()`** — a catalog holds
+  strings a pipe cannot reach. The resolver takes a fallback, which is what lets `error-layout` keep
+  rendering in an app that never called `provideI18n()` (`TranslocoService` can't be probed with
+  `{ optional: true }` — its deps have no root factory, so injecting it there throws).
+- **`setActiveLang()` does not load a language** — `LocaleStore.setLocale()` calls `load()` too, and
+  the copy resolver recomputes on `translationLoadSuccess`, not just `langChanges$` (which fires
+  before the messages exist). Drop either half and a catalog-driven page stays in the old language
+  after a switch, with no error. Both are pinned by regression tests in `i18n.spec.ts`.
+- Locale labels are endonyms (`Français`, not `French`) and are never translated.
+- `provideI18nTesting()` + `loadI18n()` for tests; `TestBed` doesn't run app initializers.
 
 ## Notifications
 
