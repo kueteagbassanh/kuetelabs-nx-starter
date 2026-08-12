@@ -1,6 +1,6 @@
 import { DestroyRef, computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
-import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+import type { AuthChangeEvent, Provider, Session, User } from '@supabase/supabase-js';
 import { type AppPermission, type AppRole, jwtClaimsSchema } from '@kuetelabs/shared/domain';
 import { injectSupabaseClient } from './supabase-client';
 
@@ -80,6 +80,29 @@ export const AuthStore = signalStore(
 
     signOut() {
       return supabase.auth.signOut();
+    },
+
+    /** Starts an OAuth redirect. The provider returns to `redirectTo`. */
+    signInWithOAuth(provider: Provider, redirectTo: string) {
+      return supabase.auth.signInWithOAuth({ provider, options: { redirectTo } });
+    },
+
+    /** Emails a password-reset link pointing at the app's callback route. */
+    resetPasswordForEmail(email: string, redirectTo: string) {
+      return supabase.auth.resetPasswordForEmail(email, { redirectTo });
+    },
+
+    /** Sets a new password for the session created by a reset link. */
+    updatePassword(password: string) {
+      return supabase.auth.updateUser({ password });
+    },
+
+    /**
+     * Completes a PKCE redirect (OAuth, magic link, email confirmation) by trading
+     * the `code` query parameter for a session.
+     */
+    exchangeCodeForSession(code: string) {
+      return supabase.auth.exchangeCodeForSession(code);
     },
 
     /** Pulls a new token so role changes apply without signing out. */

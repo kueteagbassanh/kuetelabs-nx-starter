@@ -1,13 +1,10 @@
 {
-  "name": "auth-layout",
+  "name": "docs-layout",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/frontend/layouts/auth-layout/src",
+  "sourceRoot": "libs/frontend/layouts/docs-layout/src",
   "prefix": "lib",
   "projectType": "library",
-  "tags": [
-    "platform:frontend",
-    "type:layout"
-  ],
+  "tags": ["platform:frontend", "type:layout"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"

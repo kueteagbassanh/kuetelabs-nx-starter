@@ -88,6 +88,48 @@ Component conventions (see `libs/frontend/ui/components/button`):
 - **`rxMethod` for anything with RxJS semantics** — debounce, cancellation, retry. The user search uses `debounceTime` + `distinctUntilChanged` + `switchMap`, so typing issues one request and a slow earlier response cannot overwrite a newer one. Keep `catchError` *inside* `switchMap` or the outer stream dies on the first failure.
 - Mutate only through `patchState`; never assign to a state signal directly.
 
+## Auth pages
+
+`libs/frontend/features/auth/feature` holds login, signup, forgot/reset password, the OAuth + email callback, and a setup page; `libs/frontend/layouts/auth-layout` holds only the centered chrome. Apps compose them: `{ path: 'auth', component: AuthContainer, children: authRoutes }` plus `provideAuthPages({ ... })` for app name, post-login redirect, `signupEnabled`, and OAuth providers. `admin` is invite-only, `web` allows signup — same components, different config.
+
+- **Never prerender `auth/**`** — `RenderMode.Client` in `app.routes.server.ts`. A prerendered auth page is a logged-out shell for every visitor, and the Supabase session lives in `localStorage`.
+- The callback route handles OAuth, email confirmation, and recovery; recovery is forwarded to `reset-password`.
+- Forgot-password and signup deliberately give identical responses whether or not the account exists — do not "improve" those messages.
+- Routes are behind `supabaseConfiguredGuard()`, which diverts to `/auth/setup` when no anon key is set.
+- **Guards live in `libs/frontend/data-access/supabase`, and apps wire them.** The dashboard shell
+  route carries `canActivate: [authenticatedGuard]`; signed-out users land on
+  `/auth/login?returnUrl=<url>` and are sent back after login. `guestGuard` goes on login/signup
+  only — `reset-password` needs the recovery session and `callback` runs mid-sign-in. Paths come
+  from the `AUTH_NAVIGATION` token, not literals.
+- **Every guard awaits `AuthStore.loading` before deciding.** `getSession()` is async, so a
+  synchronous `isAuthenticated()` check bounces signed-in users to login on every hard refresh.
+- With no anon key the guards pass through (dev warning) so a fresh clone stays navigable, and
+  `returnUrl` is accepted only when it starts with a single `/` — otherwise login is an open
+  redirect. See `docs/ARCHITECTURE.md` §7d.
+
+## Docs pages
+
+`libs/frontend/layouts/docs-layout` is the documentation shell: sticky header, sidebar tree,
+article, "on this page" rail, prev/next pager. Apps mount it as a routed component
+(`{ path: 'docs', component: DocsLayout, children: [...] }`) and configure it with
+`provideDocsLayout({ title, navigation, repositoryUrl, editBaseUrl, headerActions })` — which
+returns an **array**, so spread it. Full notes in that lib's README.
+
+- **Tree paths are absolute route paths** (`/docs/installation`). The sidebar feeds them to
+  `routerLink` and `DocsNavStore` finds the current page by comparing them to the router URL;
+  `external: true` links are plain anchors and sit outside the prev/next reading order.
+- **The TOC reads the rendered article** — pages arrive through `<router-outlet />`, so it scans
+  `h2`/`h3` from the DOM, assigns ids where a heading has none (authored ids win), and re-scans
+  through a `MutationObserver`. All browser-only: the first scan is in `afterNextRender`, so a
+  prerendered docs page hydrates before anything touches it.
+- **`scrollOffset` is one number for two jobs** — the scroll-spy line and the `scroll-margin-top`
+  written onto each heading. Change the header height and change it too.
+- Active states use `data-[active]` variants and `!` utilities deliberately: `text-foreground` and
+  `text-muted-foreground` are the same property, so Tailwind's output order decides the winner,
+  not class order in the attribute.
+- Like `error-layout`, this lib imports nothing from `data-access` — the docs render with no
+  Supabase configured. Anything needing a session goes in a `headerActions` component.
+
 ## Notifications
 
 In-app center + toasts. `notifications` has no client insert policy — the API writes rows with the service_role key from the same hooks that audit RBAC changes (`libs/backend/notification`). Reads and mark-as-read go straight to Supabase under RLS; delivery is a Realtime subscription in `NotificationsStore`.

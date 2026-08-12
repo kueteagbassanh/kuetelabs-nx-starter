@@ -1,4 +1,7 @@
 import { Route } from '@angular/router';
+import { AuthContainer } from '@kuetelabs/frontend/layouts/auth-layout';
+import { authRoutes } from '@kuetelabs/frontend/features/auth/feature';
+import { authenticatedGuard } from '@kuetelabs/frontend/data-access/supabase';
 import { DashboardLayout } from '@kuetelabs/frontend/layouts/dashboard-layout';
 // Static import: the header bell already pulls this lib into the initial bundle, so
 // lazy-loading it here would only mix static and dynamic imports of one library.
@@ -7,8 +10,16 @@ import { notificationRoutes } from '@kuetelabs/frontend/features/notification/fe
 
 export const appRoutes: Route[] = [
   {
+    // Chrome from the layout lib, screens from the feature lib, composed here.
+    path: 'auth',
+    component: AuthContainer,
+    children: authRoutes,
+  },
+  {
+    // Everything behind the dashboard requires a session.
     path: '',
     component: DashboardLayout,
+    canActivate: [authenticatedGuard],
     children: [
       {
         path: '',

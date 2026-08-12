@@ -12,22 +12,54 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideSupabase } from '@kuetelabs/frontend/data-access/supabase';
+import { provideAuthPages } from '@kuetelabs/frontend/features/auth/feature';
 import { provideHlmSidebarConfig } from '@kuetelabs/frontend/ui/components/sidebar';
+import { environment } from '../environments/environment';
 import {
   DASHBOARD_MENU_CONFIG,
   type SidebarConfig,
 } from '@kuetelabs/frontend/layouts/dashboard-layout';
+import {
+  provideDocsLayout,
+  type DocsNavConfig,
+} from '@kuetelabs/frontend/layouts/docs-layout';
 import { provideLandingLayout } from '@kuetelabs/frontend/layouts/landing-layout';
 import { landingConfig } from './landing.config';
 
-
+// Paths are absolute route paths: the sidebar hands them to routerLink and the
+// pager matches them against the router URL.
+const docsNavigation: DocsNavConfig = {
+  sections: [
+    {
+      label: 'Getting started',
+      items: [
+        { label: 'Introduction', path: '/docs/introduction' },
+        { label: 'Installation', path: '/docs/installation' },
+      ],
+    },
+    {
+      label: 'Reference',
+      collapsible: true,
+      items: [
+        { label: 'Angular docs', path: 'https://angular.dev', external: true },
+      ],
+    },
+  ],
+};
 
 const dashboardMenu: SidebarConfig = {
   groups: [
     {
       label: 'Application',
       items: [
-        { label: 'Dashboard', url: '/dashboard', icon: 'lucideHouse', isActive: true },
+        {
+          label: 'Dashboard',
+          url: '/dashboard',
+          icon: 'lucideHouse',
+          isActive: true,
+        },
         { label: 'Inbox', url: '/inbox', icon: 'lucideInbox', badge: '12' },
         { label: 'Calendar', url: '/calendar', icon: 'lucideCalendar' },
         { label: 'Search', url: '/search', icon: 'lucideSearch' },
@@ -90,7 +122,11 @@ const dashboardMenu: SidebarConfig = {
           defaultOpen: true,
           children: [
             { label: 'Installation', url: '/docs/installation' },
-            { label: 'Project Structure', url: '/docs/structure', isActive: true },
+            {
+              label: 'Project Structure',
+              url: '/docs/structure',
+              isActive: true,
+            },
             { label: 'Configuration', url: '/docs/configuration' },
           ],
         },
@@ -152,6 +188,18 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: 'enabled',
       }),
     ),
+    provideHttpClient(withFetch()),
+    provideSupabase({
+      url: environment.supabaseUrl,
+      anonKey: environment.supabaseAnonKey,
+    }),
+    // Same pages as admin, different policy: the public app allows self-signup.
+    provideAuthPages({
+      appName: environment.appName,
+      redirectAfterLogin: '/',
+      signupEnabled: true,
+      oauthProviders: [],
+    }),
     provideHlmSidebarConfig({
       closeMobileSidebarOnMenuButtonClick: true,
       sidebarWidth: '16rem',
@@ -166,5 +214,15 @@ export const appConfig: ApplicationConfig = {
     { provide: DASHBOARD_MENU_CONFIG, useValue: dashboardMenu },
     // Same idea for the public shell: all marketing copy comes from this object.
     provideLandingLayout(landingConfig),
+    // Returns an array of providers, so it is spread rather than pushed.
+    ...provideDocsLayout({
+      title: environment.appName,
+      homePath: '/docs',
+      repositoryUrl: 'https://github.com/kueteagbassanh/kuetelabs-nx-starter',
+      editBaseUrl:
+        'https://github.com/kueteagbassanh/kuetelabs-nx-starter/edit/main/apps/web/src/app/pages',
+      editFileExtension: '.ts',
+      navigation: docsNavigation,
+    }),
   ],
 };
