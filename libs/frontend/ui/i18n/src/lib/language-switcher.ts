@@ -30,7 +30,7 @@ import { LocaleStore } from './locale.store';
       <button
         hlmBtn
         [variant]="variant()"
-        size="icon"
+        [size]="size()"
         [hlmDropdownMenuTrigger]="languageMenu"
         [attr.aria-label]="t('common.selectLanguage')"
         [title]="t('common.language')"
@@ -68,4 +68,10 @@ export class LanguageSwitcher {
 
   /** Match the surrounding header: `ghost` in a toolbar, `outline` standalone. */
   public readonly variant = input<'ghost' | 'outline'>('ghost');
+
+  /**
+   * Trigger size. The dashboard and docs headers run `icon`; the marketing
+   * header sits on a 16-unit bar and uses `icon-sm`, matching its theme toggle.
+   */
+  public readonly size = input<'icon' | 'icon-sm'>('icon');
 }

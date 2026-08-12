@@ -6,6 +6,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideMenu, lucideX } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
 import { HlmIcon } from '@kuetelabs/frontend/ui/components/icon';
+import { I18N_ENABLED, LanguageSwitcher } from '@kuetelabs/frontend/ui/i18n';
 import { LANDING_CONFIG, type LandingAction } from '../landing.model';
 import { LANDING_BRAND_ICONS } from '../landing-icons';
 import { LandingNavLink } from './landing-nav-link';
@@ -20,7 +21,15 @@ import { ThemeToggle } from './theme-toggle';
  */
 @Component({
   selector: 'lib-landing-layout-header',
-  imports: [RouterLink, LandingNavLink, ThemeToggle, NgIcon, HlmIcon, ...HlmButtonImports],
+  imports: [
+    RouterLink,
+    LandingNavLink,
+    ThemeToggle,
+    LanguageSwitcher,
+    NgIcon,
+    HlmIcon,
+    ...HlmButtonImports,
+  ],
   providers: [provideIcons({ ...LANDING_BRAND_ICONS, lucideMenu, lucideX })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -58,6 +67,14 @@ import { ThemeToggle } from './theme-toggle';
       </nav>
 
       <div class="ms-auto flex items-center gap-2 md:ms-0">
+        <!--
+          Only when the app called provideI18n(): the switcher injects
+          TranslocoService, which throws in an app that never configured i18n,
+          and this layout has to keep rendering for one that hasn't.
+        -->
+        @if (i18nEnabled) {
+          <lib-language-switcher size="icon-sm" />
+        }
         <lib-theme-toggle />
 
         @for (action of config.actions; track action.label) {
@@ -134,6 +151,9 @@ import { ThemeToggle } from './theme-toggle';
 export class LandingLayoutHeader {
   protected readonly config = inject(LANDING_CONFIG);
   protected readonly menuOpen = signal(false);
+
+  /** Whether `provideI18n()` ran. Constant for the app's lifetime, so not a signal. */
+  protected readonly i18nEnabled = inject(I18N_ENABLED, { optional: true }) ?? false;
 
   /** Actions the top bar hides on small screens get a full-width row in the drawer. */
   protected readonly mobileActions = computed<LandingAction[]>(() =>
