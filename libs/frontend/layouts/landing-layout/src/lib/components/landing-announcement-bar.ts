@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, afterNextRender, input, signal } fr
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowRight, lucideX } from '@ng-icons/lucide';
 import { HlmIcon } from '@kuetelabs/frontend/ui/components/icon';
+import { injectCopyResolver } from '@kuetelabs/frontend/ui/i18n';
 import { LandingNavLink } from './landing-nav-link';
 import type { LandingAnnouncement } from '../landing.model';
 
@@ -26,7 +27,7 @@ const STORAGE_PREFIX = 'landing-announcement:';
         class="bg-primary text-primary-foreground relative isolate flex items-center justify-center gap-3 px-10 py-2 text-center text-xs sm:text-sm"
       >
         <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-          <span>{{ item.message }}</span>
+          <span>{{ t()(item.message) }}</span>
           @if (item.link) {
             <lib-landing-nav-link
               [link]="item.link"
@@ -42,7 +43,7 @@ const STORAGE_PREFIX = 'landing-announcement:';
             (click)="dismiss()"
           >
             <ng-icon hlm name="lucideX" size="sm" />
-            <span class="sr-only">Dismiss announcement</span>
+            <span class="sr-only">{{ t()('common.dismiss') }}</span>
           </button>
         }
       </div>
@@ -50,6 +51,8 @@ const STORAGE_PREFIX = 'landing-announcement:';
   `,
 })
 export class LandingAnnouncementBar {
+  protected readonly t = injectCopyResolver();
+
   public readonly announcement = input.required<LandingAnnouncement>();
 
   protected readonly dismissed = signal(false);

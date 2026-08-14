@@ -5,7 +5,15 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "save": "Enregistrer",
-    "loading": "Chargement…"
+    "loading": "Chargement…",
+    "dismiss": "Fermer",
+    "toggleTheme": "Basculer le mode sombre",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "emailAddress": "Adresse e-mail",
+    "subscribe": "S'abonner",
+    "newsletterNoSpam": "Pas de spam. Désinscription à tout moment.",
+    "newsletterThanks": "Merci — nous vous écrirons à {{email}}."
   },
   "auth": {
     "login": {

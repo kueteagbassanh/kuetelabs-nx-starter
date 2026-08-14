@@ -718,6 +718,14 @@ apps can all reach it. Full notes in that lib's README; the decisions worth know
   catalog-driven pages expose them. Regression tests in `i18n.spec.ts` pin both.
 - **The lib imports nothing from `data-access`**, same rule as `error-layout`. Persisting a locale to
   a user's profile therefore belongs in a feature lib that calls `LocaleStore.setLocale()`, not here.
+- **The lib owns the shared chrome; an app owns its own copy.** `common`/`auth`/`errors` ship here;
+  `web`'s marketing surface lives in `apps/web/src/app/i18n/` and is registered through
+  `provideI18n({ translations })`. Sources are deep-merged, so an app can override one chrome key.
+- **Config objects carry keys, not sentences.** `landingConfig` holds `'landing.nav.features'` and
+  `landing-layout` resolves it through `injectCopyResolver()`, whose fallback keeps a literal
+  working for an app with no i18n. `LandingNavLink` is the single choke point for every link label.
+  In section components, ids stay in the code and the words live in JSON — don't store an array of
+  sentences, since Transloco flattens nested objects and the array is then not retrievable.
 
 ## 8. Shared contracts and generated types
 

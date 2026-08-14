@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowUpRight } from '@ng-icons/lucide';
 import { HlmIcon } from '@kuetelabs/frontend/ui/components/icon';
+import { injectCopyResolver } from '@kuetelabs/frontend/ui/i18n';
 import type { LandingLink } from '../landing.model';
 
 /**
@@ -24,12 +25,12 @@ import type { LandingLink } from '../landing.model';
     @let item = link();
     @if (item.external) {
       <a [href]="item.url" target="_blank" rel="noopener noreferrer" [class]="linkClass()">
-        {{ item.label }}
+        {{ t()(item.label) }}
         <ng-icon hlm name="lucideArrowUpRight" size="xs" class="opacity-60" />
       </a>
     } @else if (item.fragment) {
       <a [routerLink]="item.url" [fragment]="item.fragment" [class]="linkClass()">
-        {{ item.label }}
+        {{ t()(item.label) }}
       </a>
     } @else {
       <a
@@ -38,12 +39,20 @@ import type { LandingLink } from '../landing.model';
         [routerLinkActiveOptions]="{ exact: true }"
         [class]="linkClass()"
       >
-        {{ item.label }}
+        {{ t()(item.label) }}
       </a>
     }
   `,
 })
 export class LandingNavLink {
+  /**
+   * Every link label in the shell passes through here — nav, footer columns,
+   * legal strip, announcement — so translating in this one place covers all of
+   * them. `label` may be a translation key or a literal; unresolved keys render
+   * as written, which is what keeps the layout usable with no i18n configured.
+   */
+  protected readonly t = injectCopyResolver();
+
   public readonly link = input.required<LandingLink>();
   public readonly linkClass = input<string>('');
 }

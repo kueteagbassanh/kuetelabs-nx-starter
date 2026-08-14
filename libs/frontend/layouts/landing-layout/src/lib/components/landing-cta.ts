@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
+import { injectCopyResolver } from '@kuetelabs/frontend/ui/i18n';
 import type { LandingCallToAction } from '../landing.model';
 
 /**
@@ -20,17 +21,17 @@ import type { LandingCallToAction } from '../landing.model';
       >
         @if (content.eyebrow) {
           <p class="text-primary text-xs font-medium tracking-widest uppercase">
-            {{ content.eyebrow }}
+            {{ t()(content.eyebrow) }}
           </p>
         }
 
         <h2 class="mt-3 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-          {{ content.heading }}
+          {{ t()(content.heading) }}
         </h2>
 
         @if (content.description) {
           <p class="text-muted-foreground mx-auto mt-4 max-w-xl text-pretty">
-            {{ content.description }}
+            {{ t()(content.description) }}
           </p>
         }
 
@@ -45,7 +46,7 @@ import type { LandingCallToAction } from '../landing.model';
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {{ action.label }}
+                {{ t()(action.label) }}
               </a>
             } @else {
               <a
@@ -55,19 +56,21 @@ import type { LandingCallToAction } from '../landing.model';
                 [routerLink]="action.url"
                 [fragment]="action.fragment"
               >
-                {{ action.label }}
+                {{ t()(action.label) }}
               </a>
             }
           }
         </div>
 
         @if (content.note) {
-          <p class="text-muted-foreground mt-4 text-xs">{{ content.note }}</p>
+          <p class="text-muted-foreground mt-4 text-xs">{{ t()(content.note) }}</p>
         }
       </div>
     </div>
   `,
 })
 export class LandingCta {
+  protected readonly t = injectCopyResolver();
+
   public readonly cta = input.required<LandingCallToAction>();
 }

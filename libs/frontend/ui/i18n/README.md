@@ -121,6 +121,15 @@ app wins key by key:
 
 Pass a `scope` to keep a feature's messages in their own lazily-loaded namespace.
 
+## Who owns which messages
+
+This lib ships the **shared chrome** — `common`, `auth`, `errors` — everything an
+app gets without writing copy. An app's own words live in the app:
+`apps/web/src/app/i18n/{en,fr}.json` holds the marketing surface (`landing.*`,
+`contact.*`) and is registered through `provideI18n({ translations: [...] })`.
+The two are deep-merged, so an app can also override a single chrome key without
+restating the file.
+
 ## Translating data, not templates
 
 Templates use `*transloco`. Catalogs and config objects hold plain strings that a
@@ -141,6 +150,23 @@ not, so injecting it in an unconfigured app throws rather than returning null.
 `ErrorPage` is the reference consumer. Its precedence is: built-in English, then
 the translation, then an explicit `provideErrorPages({ catalog })` override —
 an app that hard-codes copy means it, so that outranks the translation.
+
+`landing-layout` uses the same resolver for a different reason: `landingConfig`
+stores **translation keys** (`'landing.nav.features'`) where it used to store
+sentences, and the fallback is what still lets an app put a literal there and
+have it render unchanged. `LandingNavLink` is the choke point — every nav,
+footer, legal and announcement label passes through it, so translating there
+covers all of them at once.
+
+Two shapes need care:
+
+- **Lists.** Keep ids in the component (`{ id: 'auth', icon: … }`) and resolve
+  `t('landing.features.items.' + id + '.title')`. Do not put an array of
+  sentences in the JSON: Transloco flattens nested objects, so an array value is
+  not reliably retrievable through the directive.
+- **Copy a component renders outside its template.** `LandingHero`'s chart series
+  labels are drawn by the chart itself, so they are a `computed` over the
+  resolver rather than a template binding, and re-resolve on a language change.
 
 ## Testing
 

@@ -4,83 +4,98 @@ import type { LandingConfig } from '@kuetelabs/frontend/layouts/landing-layout';
  * Every word the marketing shell renders lives here — the same split as
  * `dashboardMenu`: the layout owns the chrome, the app owns the copy.
  *
+ * The copy fields hold **translation keys**, not sentences: `landing-layout`
+ * resolves each one through `injectCopyResolver()` and falls back to the raw
+ * string when there is no entry for it. So an app with no i18n can still put
+ * literal text here and it renders unchanged — see `src/app/i18n/en.json` for
+ * the values these keys map to.
+ *
  * All of it is placeholder content for a fictional product ("Nimbus"). Replace
  * the strings; you should not need to touch a component in `landing-layout`.
  * Icon names must come from `LANDING_BRAND_ICONS` / `LANDING_SOCIAL_ICONS`.
  */
 export const landingConfig: LandingConfig = {
   brand: {
+    // A product name, not copy — the same in every language.
     name: 'Nimbus',
     icon: 'lucideHexagon',
-    tagline: 'The product platform',
+    tagline: 'landing.brand.tagline',
     url: '/',
   },
 
   nav: [
-    { label: 'Features', url: '/', fragment: 'features' },
-    { label: 'How it works', url: '/', fragment: 'how-it-works' },
-    { label: 'Customers', url: '/', fragment: 'customers' },
-    { label: 'Pricing', url: '/', fragment: 'pricing' },
-    { label: 'FAQ', url: '/', fragment: 'faq' },
-    { label: 'Contact', url: '/contact' },
+    { label: 'landing.nav.features', url: '/', fragment: 'features' },
+    { label: 'landing.nav.howItWorks', url: '/', fragment: 'how-it-works' },
+    { label: 'landing.nav.customers', url: '/', fragment: 'customers' },
+    { label: 'landing.nav.pricing', url: '/', fragment: 'pricing' },
+    { label: 'landing.nav.faq', url: '/', fragment: 'faq' },
+    { label: 'landing.nav.contact', url: '/contact' },
   ],
 
   actions: [
-    { label: 'Sign in', url: '/auth/login', variant: 'ghost', desktopOnly: true },
-    { label: 'Start free', url: '/auth/signup' },
+    {
+      label: 'landing.actions.signIn',
+      url: '/auth/login',
+      variant: 'ghost',
+      desktopOnly: true,
+    },
+    { label: 'landing.actions.startFree', url: '/auth/signup' },
   ],
 
   announcement: {
     id: 'nimbus-2026-realtime',
-    message: 'Realtime notifications and audit exports are out of beta.',
-    link: { label: 'Read the changelog', url: '/', fragment: 'features' },
+    message: 'landing.announcement.message',
+    link: { label: 'landing.announcement.link', url: '/', fragment: 'features' },
     dismissible: true,
   },
 
   cta: {
-    eyebrow: 'Get started',
-    heading: 'Ship the feature, skip the platform work',
-    description:
-      'Auth, roles, audit trails, and dashboards on day one. Bring your own Postgres and keep every migration you already wrote.',
+    eyebrow: 'landing.cta.eyebrow',
+    heading: 'landing.cta.heading',
+    description: 'landing.cta.description',
     actions: [
-      { label: 'Start free', url: '/auth/signup' },
-      { label: 'Talk to sales', url: '/contact', variant: 'outline' },
+      { label: 'landing.actions.startFree', url: '/auth/signup' },
+      { label: 'landing.actions.talkToSales', url: '/contact', variant: 'outline' },
     ],
-    note: 'Free for up to 5 people. No card, no sales call.',
+    note: 'landing.cta.note',
   },
 
   footer: {
-    description:
-      'Nimbus gives product teams the plumbing every application needs — identity, permissions, notifications, and reporting — so the roadmap stays about the product.',
+    description: 'landing.footer.description',
     columns: [
       {
-        label: 'Product',
+        label: 'landing.footer.columns.product',
         links: [
-          { label: 'Features', url: '/', fragment: 'features' },
-          { label: 'How it works', url: '/', fragment: 'how-it-works' },
-          { label: 'Pricing', url: '/', fragment: 'pricing' },
-          { label: 'Changelog', url: '/', fragment: 'features' },
+          { label: 'landing.footer.links.features', url: '/', fragment: 'features' },
+          { label: 'landing.footer.links.howItWorks', url: '/', fragment: 'how-it-works' },
+          { label: 'landing.footer.links.pricing', url: '/', fragment: 'pricing' },
+          { label: 'landing.footer.links.changelog', url: '/', fragment: 'features' },
         ],
       },
       {
-        label: 'Company',
+        label: 'landing.footer.columns.company',
         links: [
-          { label: 'Customers', url: '/', fragment: 'customers' },
-          { label: 'Contact', url: '/contact' },
-          { label: 'Careers', url: '/contact' },
-          { label: 'Brand kit', url: '/contact' },
+          { label: 'landing.footer.links.customers', url: '/', fragment: 'customers' },
+          { label: 'landing.footer.links.contact', url: '/contact' },
+          { label: 'landing.footer.links.careers', url: '/contact' },
+          { label: 'landing.footer.links.brandKit', url: '/contact' },
         ],
       },
       {
-        label: 'Resources',
+        label: 'landing.footer.columns.resources',
         links: [
-          { label: 'Documentation', url: '/', fragment: 'faq' },
-          { label: 'API reference', url: '/', fragment: 'faq' },
-          { label: 'Status', url: 'https://example.com/status', external: true },
-          { label: 'Community', url: 'https://example.com/community', external: true },
+          { label: 'landing.footer.links.documentation', url: '/', fragment: 'faq' },
+          { label: 'landing.footer.links.apiReference', url: '/', fragment: 'faq' },
+          { label: 'landing.footer.links.status', url: 'https://example.com/status', external: true },
+          {
+            label: 'landing.footer.links.community',
+            url: 'https://example.com/community',
+            external: true,
+          },
         ],
       },
     ],
+    // Network names are brands; they stay as they are in every language.
     socials: [
       { label: 'GitHub', url: 'https://example.com/github', icon: 'lucideGithub' },
       { label: 'X', url: 'https://example.com/x', icon: 'lucideTwitter' },
@@ -88,16 +103,16 @@ export const landingConfig: LandingConfig = {
       { label: 'RSS', url: 'https://example.com/rss', icon: 'lucideRss' },
     ],
     legal: [
-      { label: 'Privacy', url: '/contact' },
-      { label: 'Terms', url: '/contact' },
-      { label: 'Security', url: '/contact' },
+      { label: 'landing.footer.legal.privacy', url: '/contact' },
+      { label: 'landing.footer.legal.terms', url: '/contact' },
+      { label: 'landing.footer.legal.security', url: '/contact' },
     ],
     newsletter: {
-      heading: 'Release notes, monthly',
-      description: 'What shipped and what broke. No drip campaign, unsubscribe in one click.',
-      placeholder: 'you@company.com',
-      cta: 'Subscribe',
+      heading: 'landing.footer.newsletter.heading',
+      description: 'landing.footer.newsletter.description',
+      placeholder: 'landing.footer.newsletter.placeholder',
+      cta: 'landing.footer.newsletter.cta',
     },
-    copyright: '© {year} Nimbus Labs. All rights reserved.',
+    copyright: 'landing.footer.copyright',
   },
 };

@@ -6,7 +6,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideMenu, lucideX } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
 import { HlmIcon } from '@kuetelabs/frontend/ui/components/icon';
-import { I18N_ENABLED, LanguageSwitcher } from '@kuetelabs/frontend/ui/i18n';
+import { I18N_ENABLED, LanguageSwitcher, injectCopyResolver } from '@kuetelabs/frontend/ui/i18n';
 import { LANDING_CONFIG, type LandingAction } from '../landing.model';
 import { LANDING_BRAND_ICONS } from '../landing-icons';
 import { LandingNavLink } from './landing-nav-link';
@@ -87,7 +87,7 @@ import { ThemeToggle } from './theme-toggle';
                 [routerLink]="action.url"
                 [fragment]="action.fragment"
               >
-                {{ action.label }}
+                {{ t()(action.label) }}
               </a>
             </span>
           } @else {
@@ -98,7 +98,7 @@ import { ThemeToggle } from './theme-toggle';
               [routerLink]="action.url"
               [fragment]="action.fragment"
             >
-              {{ action.label }}
+              {{ t()(action.label) }}
             </a>
           }
         }
@@ -114,7 +114,9 @@ import { ThemeToggle } from './theme-toggle';
           (click)="menuOpen.set(!menuOpen())"
         >
           <ng-icon hlm [name]="menuOpen() ? 'lucideX' : 'lucideMenu'" size="sm" />
-          <span class="sr-only">{{ menuOpen() ? 'Close menu' : 'Open menu' }}</span>
+          <span class="sr-only">
+            {{ menuOpen() ? t()('common.closeMenu') : t()('common.openMenu') }}
+          </span>
         </button>
       </div>
     </div>
@@ -151,6 +153,7 @@ import { ThemeToggle } from './theme-toggle';
 export class LandingLayoutHeader {
   protected readonly config = inject(LANDING_CONFIG);
   protected readonly menuOpen = signal(false);
+  protected readonly t = injectCopyResolver();
 
   /** Whether `provideI18n()` ran. Constant for the app's lifetime, so not a signal. */
   protected readonly i18nEnabled = inject(I18N_ENABLED, { optional: true }) ?? false;

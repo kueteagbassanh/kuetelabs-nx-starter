@@ -1,14 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TranslocoDirective } from '@kuetelabs/frontend/ui/i18n';
 
 /** Social proof strip. Wordmarks stand in for customer logos in the starter. */
 @Component({
   selector: 'app-landing-logo-cloud',
+  imports: [TranslocoDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'border-border/60 block border-y' },
   template: `
-    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8" *transloco="let t">
       <p class="text-muted-foreground text-center text-xs tracking-widest uppercase">
-        Trusted by product teams at
+        {{ t('landing.logoCloud.trustedBy') }}
       </p>
       <ul
         class="mt-6 grid grid-cols-2 items-center gap-6 sm:grid-cols-3 lg:grid-cols-6"

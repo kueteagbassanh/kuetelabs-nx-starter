@@ -1,0 +1,284 @@
+{
+  "landing": {
+    "brand": {
+      "tagline": "The product platform"
+    },
+    "nav": {
+      "features": "Features",
+      "howItWorks": "How it works",
+      "customers": "Customers",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "contact": "Contact"
+    },
+    "actions": {
+      "signIn": "Sign in",
+      "startFree": "Start free",
+      "talkToSales": "Talk to sales"
+    },
+    "announcement": {
+      "message": "Realtime notifications and audit exports are out of beta.",
+      "link": "Read the changelog"
+    },
+    "cta": {
+      "eyebrow": "Get started",
+      "heading": "Ship the feature, skip the platform work",
+      "description": "Auth, roles, audit trails, and dashboards on day one. Bring your own Postgres and keep every migration you already wrote.",
+      "note": "Free for up to 5 people. No card, no sales call."
+    },
+    "footer": {
+      "description": "Nimbus gives product teams the plumbing every application needs — identity, permissions, notifications, and reporting — so the roadmap stays about the product.",
+      "columns": {
+        "product": "Product",
+        "company": "Company",
+        "resources": "Resources"
+      },
+      "links": {
+        "features": "Features",
+        "howItWorks": "How it works",
+        "pricing": "Pricing",
+        "changelog": "Changelog",
+        "customers": "Customers",
+        "contact": "Contact",
+        "careers": "Careers",
+        "brandKit": "Brand kit",
+        "documentation": "Documentation",
+        "apiReference": "API reference",
+        "status": "Status",
+        "community": "Community"
+      },
+      "legal": {
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "security": "Security"
+      },
+      "newsletter": {
+        "heading": "Release notes, monthly",
+        "description": "What shipped and what broke. No drip campaign, unsubscribe in one click.",
+        "placeholder": "you@company.com",
+        "cta": "Subscribe"
+      },
+      "copyright": "© {year} Nimbus Labs. All rights reserved."
+    },
+    "hero": {
+      "badge": "Nimbus 3.0 is out — agents, now with audit trails",
+      "titleLead": "Ship your product,",
+      "titleAccent": "not your plumbing.",
+      "description": "Nimbus is the operations platform for product teams: auth, roles, notifications, and analytics wired together on day one, so your first sprint goes into the thing customers actually pay for.",
+      "ctaPrimary": "Start free",
+      "ctaSecondary": "See how it works",
+      "proof": {
+        "noCard": "No credit card required",
+        "soc2": "SOC 2 Type II",
+        "deploy": "Deploy in under 10 minutes"
+      },
+      "preview": {
+        "period": "This quarter",
+        "runs": "2.4M automated runs",
+        "delta": "+38% QoQ"
+      },
+      "stats": {
+        "latency": "Avg. latency",
+        "uptime": "Uptime",
+        "seats": "Active seats"
+      },
+      "series": {
+        "runs": "Automated runs",
+        "reviews": "Human reviews"
+      }
+    },
+    "logoCloud": {
+      "trustedBy": "Trusted by product teams at"
+    },
+    "features": {
+      "eyebrow": "Platform",
+      "heading": "Everything the boring half of your product needs",
+      "description": "The parts every serious app grows anyway — identity, permissions, notifications, telemetry — designed once and shared across your whole workspace.",
+      "items": {
+        "auth": {
+          "title": "Auth that already works",
+          "description": "Email, OAuth, magic links, and password recovery on day one — sessions handled, invite-only or open signup by config."
+        },
+        "roles": {
+          "title": "Roles and permissions",
+          "description": "Permissions ride in the token and are enforced at the database. The UI hides what a user cannot do; the row-level policy makes sure of it."
+        },
+        "notifications": {
+          "title": "Realtime notifications",
+          "description": "An in-app center and toasts fed by a live subscription, so a grant, a mention, or a failed job lands the moment it happens."
+        },
+        "analytics": {
+          "title": "Analytics you can theme",
+          "description": "Charts wired to your design tokens, so light mode, dark mode, and a rebrand are one variable change — never a redraw."
+        },
+        "automations": {
+          "title": "Automations and webhooks",
+          "description": "Schedule work, react to events, and fan out to third parties from a service that holds the secrets your browser should not."
+        },
+        "performance": {
+          "title": "Fast by construction",
+          "description": "Server-rendered, hydrated with event replay, and shipped as a single bundle per route — quick on the first paint and the tenth click."
+        }
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "How it works",
+      "heading": "From empty repo to production in an afternoon",
+      "description": "No migration project, no rewrite. Point Nimbus at your database, invite your team, and keep shipping.",
+      "step": "Step {{number}}",
+      "items": {
+        "connect": {
+          "title": "Connect your data",
+          "description": "One command links your Postgres schema. Types are generated from the database, so a column rename fails the build instead of production."
+        },
+        "invite": {
+          "title": "Invite your team",
+          "description": "Assign roles from the admin console. Every grant is audited, and revoking access signs the person out everywhere."
+        },
+        "ship": {
+          "title": "Ship the product",
+          "description": "Compose your screens from the shared component library and let the platform handle the parts nobody demos."
+        }
+      }
+    },
+    "metrics": {
+      "teams": "Teams building on Nimbus",
+      "uptime": "Rolling 90-day uptime",
+      "latency": "Median API response",
+      "rating": "Average customer rating"
+    },
+    "testimonials": {
+      "eyebrow": "Customers",
+      "heading": "Teams stopped rebuilding the same four systems",
+      "items": {
+        "amara": {
+          "quote": "We deleted an entire internal service the week we moved to Nimbus. Roles, invites, and the audit trail came for free, and the on-call rotation got noticeably quieter.",
+          "role": "VP Engineering, Northwind"
+        },
+        "rafael": {
+          "quote": "The permissions model is the first one our security reviewer signed off on without a follow-up meeting. Checks live in the database, not in a component nobody remembers.",
+          "role": "Staff Engineer, Contoso"
+        },
+        "nina": {
+          "quote": "Design shipped a new palette on a Tuesday and every chart, badge, and dark-mode surface followed. That used to be a two-sprint migration for us.",
+          "role": "Head of Design, Globex"
+        }
+      }
+    },
+    "pricing": {
+      "eyebrow": "Pricing",
+      "heading": "Priced per seat, not per surprise",
+      "description": "Every plan includes the full platform. You pay for the size of your team and the scale of your workload — nothing is gated behind a sales call except the things that genuinely need one.",
+      "billingPeriod": "Billing period",
+      "periods": {
+        "monthly": "Monthly",
+        "yearly": "Yearly · save 17%"
+      },
+      "mostPopular": "Most popular",
+      "custom": "Custom",
+      "perSeat": "/ seat / month",
+      "billedYearly": "Billed yearly — two months free.",
+      "plans": {
+        "starter": {
+          "name": "Starter",
+          "description": "For the first few engineers and the first real customers.",
+          "cta": "Start free",
+          "features": {
+            "members": "Up to 5 team members",
+            "signin": "Email and OAuth sign-in",
+            "runs": "10k automated runs / month",
+            "support": "Community support"
+          }
+        },
+        "growth": {
+          "name": "Growth",
+          "description": "For teams with customers who notice when something breaks.",
+          "cta": "Start 14-day trial",
+          "features": {
+            "members": "Unlimited team members",
+            "roles": "Custom roles and permissions",
+            "runs": "1M automated runs / month",
+            "realtime": "Realtime notifications and webhooks",
+            "audit": "Audit log with 1-year retention",
+            "support": "Priority support"
+          }
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "For organisations with a procurement process and a runbook.",
+          "cta": "Talk to sales",
+          "features": {
+            "sso": "SSO and SCIM provisioning",
+            "residency": "Data residency options",
+            "runs": "Unlimited runs, custom rate limits",
+            "sla": "99.99% uptime SLA",
+            "engineer": "Dedicated solutions engineer"
+          }
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "heading": "Questions we get before the first call",
+      "stillDeciding": "Still deciding?",
+      "talkToHuman": "Talk to a human",
+      "weAnswer": "— we answer within a business day.",
+      "items": {
+        "database": {
+          "question": "Do I have to move my database?",
+          "answer": "No. Nimbus connects to your existing Postgres and generates types from your schema. Your data stays where it is, and you keep every extension and migration you already rely on."
+        },
+        "permissions": {
+          "question": "How are permissions actually enforced?",
+          "answer": "Permissions are stamped into the access token and enforced by row-level security in the database. The UI uses the same claims to decide what to render, but the database is the thing that says no."
+        },
+        "revoke": {
+          "question": "What happens when I revoke access?",
+          "answer": "The grant is removed and audited immediately, and disabling a user signs them out of every session globally rather than waiting for a token to expire."
+        },
+        "designSystem": {
+          "question": "Can I use my own design system?",
+          "answer": "Yes. Every surface reads from a small set of design tokens, so a palette change or a font swap propagates through components, charts, and dark mode without touching a component file."
+        },
+        "freeTier": {
+          "question": "Is there a free tier for side projects?",
+          "answer": "Starter is free for up to five people and 10,000 automated runs a month, with no card required. Most side projects never leave it."
+        },
+        "downtime": {
+          "question": "How do you handle downtime?",
+          "answer": "Growth and Enterprise plans publish a rolling uptime figure and a public status page. Enterprise adds a 99.99% SLA with service credits and a named contact during incidents."
+        }
+      }
+    }
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "heading": "Tell us what you are building",
+    "description": "Sales questions, security reviews, migration plans — a real engineer reads every message and replies within one business day.",
+    "form": {
+      "title": "Send a message",
+      "description": "No chatbot, no drip campaign.",
+      "name": "Name",
+      "email": "Work email",
+      "company": "Company",
+      "message": "How can we help?",
+      "messagePlaceholder": "We are moving 40 engineers off an in-house admin tool…",
+      "send": "Send message",
+      "sent": "Thanks — we'll reply within one business day."
+    },
+    "channels": {
+      "sales": {
+        "title": "Sales",
+        "description": "Pricing, procurement, and security questionnaires."
+      },
+      "support": {
+        "title": "Support",
+        "description": "Existing customers, 24/5 with weekend on-call for incidents."
+      },
+      "office": {
+        "title": "Office",
+        "description": "Visits by appointment."
+      }
+    }
+  }
+}

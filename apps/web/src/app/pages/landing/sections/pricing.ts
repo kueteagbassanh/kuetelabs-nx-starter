@@ -7,13 +7,18 @@ import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
 import { HlmCardImports } from '@kuetelabs/frontend/ui/components/card';
 import { HlmIcon } from '@kuetelabs/frontend/ui/components/icon';
 import { LandingSection } from '@kuetelabs/frontend/layouts/landing-layout';
+import { TranslocoDirective } from '@kuetelabs/frontend/ui/i18n';
 
 interface Plan {
-  name: string;
-  description: string;
+  /** Keys `landing.pricing.plans.<id>.*`. */
+  id: string;
   monthly: number | null;
+  /**
+   * Feature *ids*, resolved as `landing.pricing.plans.<id>.features.<featureId>`.
+   * Ids rather than a translated array: Transloco flattens nested JSON, so an
+   * array value is not reliably retrievable through the `transloco` directive.
+   */
   features: string[];
-  cta: string;
   route: string;
   featured?: boolean;
 }
@@ -23,6 +28,7 @@ interface Plan {
   selector: 'app-landing-pricing',
   imports: [
     LandingSection,
+    TranslocoDirective,
     RouterLink,
     NgIcon,
     HlmIcon,
@@ -33,101 +39,117 @@ interface Plan {
   providers: [provideIcons({ lucideCheck })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <lib-landing-section
-      id="pricing"
-      eyebrow="Pricing"
-      heading="Priced per seat, not per surprise"
-      description="Every plan includes the full platform. You pay for the size of your team and the scale of your workload — nothing is gated behind a sales call except the things that genuinely need one."
-    >
-      <div class="flex flex-col items-center gap-10">
-        <div
-          class="bg-muted/60 inline-flex items-center rounded-lg p-1"
-          role="group"
-          aria-label="Billing period"
-        >
-          @for (period of periods; track period.id) {
-            <button
-              hlmBtn
-              size="sm"
-              type="button"
-              [variant]="billing() === period.id ? 'default' : 'ghost'"
-              [attr.aria-pressed]="billing() === period.id"
-              (click)="billing.set(period.id)"
-            >
-              {{ period.label }}
-            </button>
-          }
-        </div>
+    <ng-container *transloco="let t">
+      <lib-landing-section
+        id="pricing"
+        [eyebrow]="t('landing.pricing.eyebrow')"
+        [heading]="t('landing.pricing.heading')"
+        [description]="t('landing.pricing.description')"
+      >
+        <div class="flex flex-col items-center gap-10">
+          <div
+            class="bg-muted/60 inline-flex items-center rounded-lg p-1"
+            role="group"
+            [attr.aria-label]="t('landing.pricing.billingPeriod')"
+          >
+            @for (period of periods; track period) {
+              <button
+                hlmBtn
+                size="sm"
+                type="button"
+                [variant]="billing() === period ? 'default' : 'ghost'"
+                [attr.aria-pressed]="billing() === period"
+                (click)="billing.set(period)"
+              >
+                {{ t('landing.pricing.periods.' + period) }}
+              </button>
+            }
+          </div>
 
-        <div class="grid w-full gap-4 lg:grid-cols-3">
-          @for (plan of plans; track plan.name) {
-            <section
-              hlmCard
-              class="flex h-full flex-col"
-              [class.ring-primary]="plan.featured"
-              [class.ring-2]="plan.featured"
-              [class.shadow-lg]="plan.featured"
-            >
-              <div hlmCardHeader>
-                <h3 hlmCardTitle>{{ plan.name }}</h3>
-                <p hlmCardDescription>{{ plan.description }}</p>
-                @if (plan.featured) {
-                  <!-- hlmCard is overflow-hidden, so the badge sits in the
-                       header's action slot rather than outside the card edge. -->
-                  <span hlmCardAction><span hlmBadge>Most popular</span></span>
-                }
-              </div>
-
-              <div hlmCardContent class="flex-1">
-                <p class="flex items-baseline gap-1">
-                  @if (plan.monthly === null) {
-                    <span class="text-3xl font-semibold tracking-tight">Custom</span>
-                  } @else {
-                    <span class="text-4xl font-semibold tracking-tight">
-                      {{ price(plan.monthly) }}
+          <div class="grid w-full gap-4 lg:grid-cols-3">
+            @for (plan of plans; track plan.id) {
+              <section
+                hlmCard
+                class="flex h-full flex-col"
+                [class.ring-primary]="plan.featured"
+                [class.ring-2]="plan.featured"
+                [class.shadow-lg]="plan.featured"
+              >
+                <div hlmCardHeader>
+                  <h3 hlmCardTitle>{{ t('landing.pricing.plans.' + plan.id + '.name') }}</h3>
+                  <p hlmCardDescription>
+                    {{ t('landing.pricing.plans.' + plan.id + '.description') }}
+                  </p>
+                  @if (plan.featured) {
+                    <!-- hlmCard is overflow-hidden, so the badge sits in the
+                         header's action slot rather than outside the card edge. -->
+                    <span hlmCardAction>
+                      <span hlmBadge>{{ t('landing.pricing.mostPopular') }}</span>
                     </span>
-                    <span class="text-muted-foreground text-sm">/ seat / month</span>
                   }
-                </p>
+                </div>
 
-                @if (plan.monthly !== null && billing() === 'yearly') {
-                  <p class="text-muted-foreground mt-1 text-xs">Billed yearly — two months free.</p>
-                }
+                <div hlmCardContent class="flex-1">
+                  <p class="flex items-baseline gap-1">
+                    @if (plan.monthly === null) {
+                      <span class="text-3xl font-semibold tracking-tight">
+                        {{ t('landing.pricing.custom') }}
+                      </span>
+                    } @else {
+                      <span class="text-4xl font-semibold tracking-tight">
+                        {{ price(plan.monthly) }}
+                      </span>
+                      <span class="text-muted-foreground text-sm">
+                        {{ t('landing.pricing.perSeat') }}
+                      </span>
+                    }
+                  </p>
 
-                <ul class="mt-6 flex flex-col gap-3 text-sm">
-                  @for (feature of plan.features; track feature) {
-                    <li class="flex items-start gap-2">
-                      <ng-icon hlm name="lucideCheck" size="xs" class="text-primary mt-1 shrink-0" />
-                      <span class="text-muted-foreground">{{ feature }}</span>
-                    </li>
+                  @if (plan.monthly !== null && billing() === 'yearly') {
+                    <p class="text-muted-foreground mt-1 text-xs">
+                      {{ t('landing.pricing.billedYearly') }}
+                    </p>
                   }
-                </ul>
-              </div>
 
-              <div hlmCardFooter>
-                <a
-                  hlmBtn
-                  class="w-full"
-                  [variant]="plan.featured ? 'default' : 'outline'"
-                  [routerLink]="plan.route"
-                >
-                  {{ plan.cta }}
-                </a>
-              </div>
-            </section>
-          }
+                  <ul class="mt-6 flex flex-col gap-3 text-sm">
+                    @for (feature of plan.features; track feature) {
+                      <li class="flex items-start gap-2">
+                        <ng-icon
+                          hlm
+                          name="lucideCheck"
+                          size="xs"
+                          class="text-primary mt-1 shrink-0"
+                        />
+                        <span class="text-muted-foreground">
+                          {{ t('landing.pricing.plans.' + plan.id + '.features.' + feature) }}
+                        </span>
+                      </li>
+                    }
+                  </ul>
+                </div>
+
+                <div hlmCardFooter>
+                  <a
+                    hlmBtn
+                    class="w-full"
+                    [variant]="plan.featured ? 'default' : 'outline'"
+                    [routerLink]="plan.route"
+                  >
+                    {{ t('landing.pricing.plans.' + plan.id + '.cta') }}
+                  </a>
+                </div>
+              </section>
+            }
+          </div>
         </div>
-      </div>
-    </lib-landing-section>
+      </lib-landing-section>
+    </ng-container>
   `,
 })
 export class LandingPricing {
   protected readonly billing = signal<'monthly' | 'yearly'>('monthly');
 
-  protected readonly periods = [
-    { id: 'monthly' as const, label: 'Monthly' },
-    { id: 'yearly' as const, label: 'Yearly · save 17%' },
-  ];
+  protected readonly periods = ['monthly', 'yearly'] as const;
 
   /** Yearly is ten months' worth of monthly, rounded to the nearest dollar. */
   protected readonly discount = computed(() => (this.billing() === 'yearly' ? 10 / 12 : 1));
@@ -136,48 +158,25 @@ export class LandingPricing {
     return `$${Math.round(monthly * this.discount())}`;
   }
 
+  /** Prices, ordering and routes; all wording is in `src/app/i18n/*.json`. */
   protected readonly plans: Plan[] = [
     {
-      name: 'Starter',
-      description: 'For the first few engineers and the first real customers.',
+      id: 'starter',
       monthly: 0,
-      features: [
-        'Up to 5 team members',
-        'Email and OAuth sign-in',
-        '10k automated runs / month',
-        'Community support',
-      ],
-      cta: 'Start free',
+      features: ['members', 'signin', 'runs', 'support'],
       route: '/auth/signup',
     },
     {
-      name: 'Growth',
-      description: 'For teams with customers who notice when something breaks.',
+      id: 'growth',
       monthly: 24,
-      features: [
-        'Unlimited team members',
-        'Custom roles and permissions',
-        '1M automated runs / month',
-        'Realtime notifications and webhooks',
-        'Audit log with 1-year retention',
-        'Priority support',
-      ],
-      cta: 'Start 14-day trial',
+      features: ['members', 'roles', 'runs', 'realtime', 'audit', 'support'],
       route: '/auth/signup',
       featured: true,
     },
     {
-      name: 'Enterprise',
-      description: 'For organisations with a procurement process and a runbook.',
+      id: 'enterprise',
       monthly: null,
-      features: [
-        'SSO and SCIM provisioning',
-        'Data residency options',
-        'Unlimited runs, custom rate limits',
-        '99.99% uptime SLA',
-        'Dedicated solutions engineer',
-      ],
-      cta: 'Talk to sales',
+      features: ['sso', 'residency', 'runs', 'sla', 'engineer'],
       route: '/contact',
     },
   ];
