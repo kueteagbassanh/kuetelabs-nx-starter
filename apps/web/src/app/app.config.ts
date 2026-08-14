@@ -197,7 +197,20 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     // Runtime i18n. The locale rides in a cookie so this SSR render and the
     // hydrating client agree on it — see the i18n lib's README.
-    ...provideI18n({ defaultLocale: 'en' }),
+    //
+    // The lib ships the shared chrome (auth, errors); these files add this app's
+    // own marketing copy, merged over it. One lazy chunk per locale.
+    ...provideI18n({
+      defaultLocale: 'en',
+      translations: [
+        {
+          loaders: {
+            en: () => import('./i18n/en.json'),
+            fr: () => import('./i18n/fr.json'),
+          },
+        },
+      ],
+    }),
     provideSupabase({
       url: environment.supabaseUrl,
       anonKey: environment.supabaseAnonKey,

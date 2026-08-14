@@ -1,17 +1,20 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LandingSection } from '@kuetelabs/frontend/layouts/landing-layout';
+import { TranslocoDirective } from '@kuetelabs/frontend/ui/i18n';
 
 /** Numbers band. Dummy figures — replace before anyone reads them as a claim. */
 @Component({
   selector: 'app-landing-metrics',
-  imports: [LandingSection],
+  imports: [LandingSection, TranslocoDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <lib-landing-section>
-      <dl class="grid gap-8 text-center sm:grid-cols-2 lg:grid-cols-4">
-        @for (metric of metrics; track metric.label) {
+      <dl class="grid gap-8 text-center sm:grid-cols-2 lg:grid-cols-4" *transloco="let t">
+        @for (metric of metrics; track metric.id) {
           <div class="flex flex-col gap-2">
-            <dt class="text-muted-foreground order-2 text-sm">{{ metric.label }}</dt>
+            <dt class="text-muted-foreground order-2 text-sm">
+              {{ t('landing.metrics.' + metric.id) }}
+            </dt>
             <dd class="order-1 text-4xl font-semibold tracking-tight">{{ metric.value }}</dd>
           </div>
         }
@@ -20,10 +23,15 @@ import { LandingSection } from '@kuetelabs/frontend/layouts/landing-layout';
   `,
 })
 export class LandingMetrics {
+  /**
+   * `id` keys the label in the message files; `value` is a figure, which reads
+   * the same in every language here. A locale that formats numbers differently
+   * would move these into the translation files too.
+   */
   protected readonly metrics = [
-    { value: '12k+', label: 'Teams building on Nimbus' },
-    { value: '99.98%', label: 'Rolling 90-day uptime' },
-    { value: '38 ms', label: 'Median API response' },
-    { value: '4.9/5', label: 'Average customer rating' },
+    { id: 'teams', value: '12k+' },
+    { id: 'uptime', value: '99.98%' },
+    { id: 'latency', value: '38 ms' },
+    { id: 'rating', value: '4.9/5' },
   ];
 }

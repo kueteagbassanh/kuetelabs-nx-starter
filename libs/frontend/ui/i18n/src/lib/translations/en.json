@@ -5,7 +5,15 @@
     "cancel": "Cancel",
     "close": "Close",
     "save": "Save",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "dismiss": "Dismiss",
+    "toggleTheme": "Toggle dark mode",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "emailAddress": "Email address",
+    "subscribe": "Subscribe",
+    "newsletterNoSpam": "No spam. Unsubscribe at any time.",
+    "newsletterThanks": "Thanks — we'll be in touch at {{email}}."
   },
   "auth": {
     "login": {

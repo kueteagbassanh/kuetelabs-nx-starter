@@ -157,9 +157,9 @@ returns an **array**, so spread it. Full notes in that lib's README.
 ## Internationalization
 
 `libs/frontend/ui/i18n` owns runtime i18n (**Transloco**), tagged `type:ui` so layouts, features and
-apps can all import it. Apps spread `...provideI18n({ defaultLocale: 'en' })`. Ships `en` + `fr` for
-the shared chrome — auth pages and every error screen. Full model in `docs/ARCHITECTURE.md` §7f and
-that lib's README.
+apps can all import it. Apps spread `...provideI18n({ defaultLocale: 'en' })`. The lib ships `en` +
+`fr` for the shared chrome — auth pages and every error screen; `web` adds its own marketing copy
+from `apps/web/src/app/i18n/`. Full model in `docs/ARCHITECTURE.md` §7f and that lib's README.
 
 - **Import from `@kuetelabs/frontend/ui/i18n`, never `@jsverse/transloco` directly.** The barrel
   re-exports `TranslocoDirective`, `TranslocoPipe`, `TranslocoService` and `translateSignal`.
@@ -184,8 +184,21 @@ that lib's README.
   the copy resolver recomputes on `translationLoadSuccess`, not just `langChanges$` (which fires
   before the messages exist). Drop either half and a catalog-driven page stays in the old language
   after a switch, with no error. Both are pinned by regression tests in `i18n.spec.ts`.
-- Locale labels are endonyms (`Français`, not `French`) and are never translated.
+- **Config objects hold translation keys, not sentences.** `landingConfig` stores
+  `'landing.nav.features'`; `landing-layout` resolves each through `injectCopyResolver()`, which
+  falls back to the raw string. So a literal still renders in an app with no i18n. Same rule as the
+  error catalog.
+- **In a section component: ids in the code, words in the JSON.** `features`, `pricing`, `faq` and
+  friends keep `{ id, icon }` and resolve `t('landing.features.items.' + id + '.title')`. Don't put
+  a translated array in the JSON — Transloco flattens nested objects, so an array value is not
+  reliably retrievable through the directive.
+- **Copy the chart renders itself needs a computed**, not a template binding — `LandingHero`'s
+  `usageSeries` is a `computed` over `injectCopyResolver()`, because the legend text never passes
+  through the template's `t`.
+- Locale labels are endonyms (`Français`, not `French`) and are never translated. Product, brand and
+  people names are not translated either.
 - `provideI18nTesting()` + `loadI18n()` for tests; `TestBed` doesn't run app initializers.
+  `apps/web/src/app/i18n/translations.spec.ts` fails the build if `en` and `fr` drift apart.
 
 ## Notifications
 

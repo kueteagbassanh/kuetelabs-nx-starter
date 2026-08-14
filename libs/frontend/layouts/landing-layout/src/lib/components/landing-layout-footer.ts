@@ -4,6 +4,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
 import { HlmIcon } from '@kuetelabs/frontend/ui/components/icon';
 import { HlmInputImports } from '@kuetelabs/frontend/ui/components/input';
+import { injectCopyResolver } from '@kuetelabs/frontend/ui/i18n';
 import { LANDING_CONFIG } from '../landing.model';
 import { LANDING_BRAND_ICONS, LANDING_SOCIAL_ICONS } from '../landing-icons';
 import { LandingNavLink } from './landing-nav-link';
@@ -44,7 +45,7 @@ import { LandingNavLink } from './landing-nav-link';
 
           @if (footer.description) {
             <p class="text-muted-foreground mt-4 max-w-sm text-sm leading-relaxed">
-              {{ footer.description }}
+              {{ t()(footer.description) }}
             </p>
           }
 
@@ -69,8 +70,8 @@ import { LandingNavLink } from './landing-nav-link';
 
         <div class="grid gap-8 sm:grid-cols-3 lg:col-span-5">
           @for (column of footer.columns; track column.label) {
-            <nav [attr.aria-label]="column.label">
-              <h2 class="text-sm font-medium">{{ column.label }}</h2>
+            <nav [attr.aria-label]="t()(column.label)">
+              <h2 class="text-sm font-medium">{{ t()(column.label) }}</h2>
               <ul class="mt-4 flex flex-col gap-3">
                 @for (link of column.links; track link.label) {
                   <li>
@@ -87,15 +88,17 @@ import { LandingNavLink } from './landing-nav-link';
 
         @if (footer.newsletter; as newsletter) {
           <div class="lg:col-span-3">
-            <h2 class="text-sm font-medium">{{ newsletter.heading }}</h2>
+            <h2 class="text-sm font-medium">{{ t()(newsletter.heading) }}</h2>
             @if (newsletter.description) {
               <p class="text-muted-foreground mt-4 text-sm leading-relaxed">
-                {{ newsletter.description }}
+                {{ t()(newsletter.description) }}
               </p>
             }
 
             <form class="mt-4 flex flex-col gap-2" (submit)="subscribe($event, email)">
-              <label class="sr-only" for="landing-newsletter-email">Email address</label>
+              <label class="sr-only" for="landing-newsletter-email">
+                {{ t()('common.emailAddress') }}
+              </label>
               <input
                 hlmInput
                 #email
@@ -104,16 +107,18 @@ import { LandingNavLink } from './landing-nav-link';
                 required
                 autocomplete="email"
                 class="w-full"
-                [placeholder]="newsletter.placeholder ?? 'you@company.com'"
+                [placeholder]="t()(newsletter.placeholder ?? 'you@company.com')"
               />
-              <button hlmBtn type="submit" size="sm">{{ newsletter.cta ?? 'Subscribe' }}</button>
+              <button hlmBtn type="submit" size="sm">
+                {{ t()(newsletter.cta ?? 'common.subscribe') }}
+              </button>
             </form>
 
             <p class="text-muted-foreground mt-2 text-xs" aria-live="polite">
-              @if (subscribed()) {
-                Thanks — we'll be in touch at {{ subscribed() }}.
+              @if (subscribed(); as address) {
+                {{ t()('common.newsletterThanks', undefined, { email: address }) }}
               } @else {
-                No spam. Unsubscribe at any time.
+                {{ t()('common.newsletterNoSpam') }}
               }
             </p>
           </div>
@@ -144,14 +149,19 @@ import { LandingNavLink } from './landing-nav-link';
 export class LandingLayoutFooter {
   protected readonly config = inject(LANDING_CONFIG);
   protected readonly footer = this.config.footer;
+  protected readonly t = injectCopyResolver();
 
   protected readonly subscribed = signal<string | null>(null);
 
+  /**
+   * Translate first, then substitute `{year}` — the placeholder has to survive
+   * into whichever language's string is chosen. Reads `t()` so a language change
+   * recomputes it.
+   */
   protected readonly copyright = computed(() =>
-    (this.footer.copyright ?? `© {year} ${this.config.brand.name}. All rights reserved.`).replace(
-      '{year}',
-      String(new Date().getFullYear()),
-    ),
+    this.t()(
+      this.footer.copyright ?? `© {year} ${this.config.brand.name}. All rights reserved.`,
+    ).replace('{year}', String(new Date().getFullYear())),
   );
 
   protected subscribe(event: Event, input: HTMLInputElement): void {

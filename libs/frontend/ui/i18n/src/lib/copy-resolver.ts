@@ -6,8 +6,12 @@ import { filter, scan } from 'rxjs/operators';
 import { I18N_ENABLED } from './i18n.config';
 
 /**
- * Looks up `key`, falling back to `fallback` when there is no translation for it
- * (or no i18n configured at all).
+ * Looks up `key`, falling back when there is no translation for it (or no i18n
+ * configured at all).
+ *
+ * `fallback` defaults to the key itself. That is what lets a config object hold
+ * *either* a translation key or a literal sentence: a key resolves, and a
+ * sentence with no matching entry renders as written.
  *
  * `params` feeds `{{ }}` placeholders in the translation. It is *not* applied to
  * `fallback` — a caller supplying a fallback already knows the values and can
@@ -15,7 +19,7 @@ import { I18N_ENABLED } from './i18n.config';
  */
 export type CopyResolver = (
   key: string,
-  fallback: string,
+  fallback?: string,
   params?: Record<string, unknown>,
 ) => string;
 
@@ -35,7 +39,7 @@ export function injectCopyResolver(): Signal<CopyResolver> {
   if (!enabled) {
     // No i18n in this app: every lookup is its own fallback. Constant, so
     // consumers can depend on it unconditionally.
-    return computed(() => (_key: string, fallback: string) => fallback);
+    return computed(() => (key: string, fallback?: string) => fallback ?? key);
   }
 
   const transloco = inject(TranslocoService);
@@ -68,14 +72,14 @@ export function injectCopyResolver(): Signal<CopyResolver> {
     revision();
     return (
       key: string,
-      fallback: string,
+      fallback?: string,
       params?: Record<string, unknown>,
     ): string => {
       const value = transloco.translate<string>(key, params);
       // Transloco echoes the key back when it has no entry for it.
       return typeof value === 'string' && value !== '' && value !== key
         ? value
-        : fallback;
+        : (fallback ?? key);
     };
   });
 }

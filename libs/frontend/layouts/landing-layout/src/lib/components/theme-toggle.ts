@@ -3,6 +3,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideMoon, lucideSun } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@kuetelabs/frontend/ui/components/button';
 import { HlmIcon } from '@kuetelabs/frontend/ui/components/icon';
+import { injectCopyResolver } from '@kuetelabs/frontend/ui/i18n';
 import { ThemeStore } from '../theme.store';
 
 /**
@@ -36,10 +37,11 @@ import { ThemeStore } from '../theme.store';
       <span class="hidden dark:block">
         <ng-icon hlm name="lucideMoon" size="sm" />
       </span>
-      <span class="sr-only">Toggle dark mode</span>
+      <span class="sr-only">{{ t()('common.toggleTheme') }}</span>
     </button>
   `,
 })
 export class ThemeToggle {
   protected readonly theme = inject(ThemeStore);
+  protected readonly t = injectCopyResolver();
 }

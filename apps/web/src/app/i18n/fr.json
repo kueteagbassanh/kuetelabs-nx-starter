@@ -1,0 +1,284 @@
+{
+  "landing": {
+    "brand": {
+      "tagline": "La plateforme produit"
+    },
+    "nav": {
+      "features": "Fonctionnalités",
+      "howItWorks": "Comment ça marche",
+      "customers": "Clients",
+      "pricing": "Tarifs",
+      "faq": "FAQ",
+      "contact": "Contact"
+    },
+    "actions": {
+      "signIn": "Se connecter",
+      "startFree": "Commencer gratuitement",
+      "talkToSales": "Parler à un commercial"
+    },
+    "announcement": {
+      "message": "Les notifications en temps réel et les exports d'audit sortent de bêta.",
+      "link": "Lire le journal des versions"
+    },
+    "cta": {
+      "eyebrow": "Démarrer",
+      "heading": "Livrez la fonctionnalité, pas la plomberie",
+      "description": "Authentification, rôles, journaux d'audit et tableaux de bord dès le premier jour. Gardez votre propre Postgres et toutes les migrations que vous avez déjà écrites.",
+      "note": "Gratuit jusqu'à 5 personnes. Sans carte bancaire, sans rendez-vous commercial."
+    },
+    "footer": {
+      "description": "Nimbus donne aux équipes produit la plomberie dont toute application a besoin — identité, permissions, notifications et reporting — pour que la feuille de route reste centrée sur le produit.",
+      "columns": {
+        "product": "Produit",
+        "company": "Entreprise",
+        "resources": "Ressources"
+      },
+      "links": {
+        "features": "Fonctionnalités",
+        "howItWorks": "Comment ça marche",
+        "pricing": "Tarifs",
+        "changelog": "Journal des versions",
+        "customers": "Clients",
+        "contact": "Contact",
+        "careers": "Carrières",
+        "brandKit": "Kit de marque",
+        "documentation": "Documentation",
+        "apiReference": "Référence de l'API",
+        "status": "État des services",
+        "community": "Communauté"
+      },
+      "legal": {
+        "privacy": "Confidentialité",
+        "terms": "Conditions",
+        "security": "Sécurité"
+      },
+      "newsletter": {
+        "heading": "Les nouveautés, chaque mois",
+        "description": "Ce qui a été livré et ce qui a cassé. Pas de campagne automatisée, désinscription en un clic.",
+        "placeholder": "vous@entreprise.com",
+        "cta": "S'abonner"
+      },
+      "copyright": "© {year} Nimbus Labs. Tous droits réservés."
+    },
+    "hero": {
+      "badge": "Nimbus 3.0 est disponible — les agents, désormais avec journaux d'audit",
+      "titleLead": "Livrez votre produit,",
+      "titleAccent": "pas votre plomberie.",
+      "description": "Nimbus est la plateforme d'exploitation des équipes produit : authentification, rôles, notifications et analytique reliés dès le premier jour, pour que votre premier sprint aille à ce que les clients paient vraiment.",
+      "ctaPrimary": "Commencer gratuitement",
+      "ctaSecondary": "Voir comment ça marche",
+      "proof": {
+        "noCard": "Sans carte bancaire",
+        "soc2": "SOC 2 Type II",
+        "deploy": "Déploiement en moins de 10 minutes"
+      },
+      "preview": {
+        "period": "Ce trimestre",
+        "runs": "2,4 M d'exécutions automatisées",
+        "delta": "+38 % sur le trimestre"
+      },
+      "stats": {
+        "latency": "Latence moyenne",
+        "uptime": "Disponibilité",
+        "seats": "Sièges actifs"
+      },
+      "series": {
+        "runs": "Exécutions automatisées",
+        "reviews": "Revues humaines"
+      }
+    },
+    "logoCloud": {
+      "trustedBy": "La confiance des équipes produit de"
+    },
+    "features": {
+      "eyebrow": "Plateforme",
+      "heading": "Tout ce dont la moitié ingrate de votre produit a besoin",
+      "description": "Les briques que toute application sérieuse finit par développer — identité, permissions, notifications, télémétrie — conçues une fois et partagées dans tout votre espace de travail.",
+      "items": {
+        "auth": {
+          "title": "Une authentification déjà opérationnelle",
+          "description": "E-mail, OAuth, liens magiques et récupération de mot de passe dès le premier jour — sessions gérées, inscription sur invitation ou ouverte selon la configuration."
+        },
+        "roles": {
+          "title": "Rôles et permissions",
+          "description": "Les permissions voyagent dans le jeton et sont appliquées au niveau de la base. L'interface masque ce qu'un utilisateur ne peut pas faire ; la politique au niveau des lignes le garantit."
+        },
+        "notifications": {
+          "title": "Notifications en temps réel",
+          "description": "Un centre intégré et des toasts alimentés par un abonnement live : une attribution, une mention ou un job en échec arrive à l'instant même."
+        },
+        "analytics": {
+          "title": "Une analytique thématisable",
+          "description": "Des graphiques reliés à vos jetons de design : mode clair, mode sombre et changement de marque se font en modifiant une variable — jamais en redessinant."
+        },
+        "automations": {
+          "title": "Automatisations et webhooks",
+          "description": "Planifiez des traitements, réagissez aux événements et diffusez vers des tiers depuis un service qui détient les secrets que votre navigateur ne devrait pas connaître."
+        },
+        "performance": {
+          "title": "Rapide par construction",
+          "description": "Rendu côté serveur, hydraté avec rejeu d'événements et livré en un seul bundle par route — rapide au premier affichage comme au dixième clic."
+        }
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "Comment ça marche",
+      "heading": "D'un dépôt vide à la production en un après-midi",
+      "description": "Aucun projet de migration, aucune réécriture. Pointez Nimbus vers votre base de données, invitez votre équipe et continuez à livrer.",
+      "step": "Étape {{number}}",
+      "items": {
+        "connect": {
+          "title": "Connectez vos données",
+          "description": "Une seule commande relie votre schéma Postgres. Les types sont générés depuis la base : renommer une colonne casse le build plutôt que la production."
+        },
+        "invite": {
+          "title": "Invitez votre équipe",
+          "description": "Attribuez les rôles depuis la console d'administration. Chaque attribution est auditée, et révoquer un accès déconnecte la personne partout."
+        },
+        "ship": {
+          "title": "Livrez le produit",
+          "description": "Composez vos écrans à partir de la bibliothèque de composants partagée et laissez la plateforme gérer ce que personne ne démontre."
+        }
+      }
+    },
+    "metrics": {
+      "teams": "Équipes qui construisent sur Nimbus",
+      "uptime": "Disponibilité glissante sur 90 jours",
+      "latency": "Temps de réponse médian de l'API",
+      "rating": "Note moyenne des clients"
+    },
+    "testimonials": {
+      "eyebrow": "Clients",
+      "heading": "Ces équipes ont cessé de reconstruire les quatre mêmes systèmes",
+      "items": {
+        "amara": {
+          "quote": "Nous avons supprimé tout un service interne la semaine où nous sommes passés à Nimbus. Les rôles, les invitations et la piste d'audit étaient offerts, et les astreintes sont devenues nettement plus calmes.",
+          "role": "VP Ingénierie, Northwind"
+        },
+        "rafael": {
+          "quote": "C'est le premier modèle de permissions que notre auditeur sécurité a validé sans réunion de suivi. Les contrôles vivent dans la base, pas dans un composant dont plus personne ne se souvient.",
+          "role": "Ingénieur principal, Contoso"
+        },
+        "nina": {
+          "quote": "Le design a livré une nouvelle palette un mardi et tous les graphiques, badges et surfaces en mode sombre ont suivi. C'était auparavant une migration de deux sprints.",
+          "role": "Directrice du design, Globex"
+        }
+      }
+    },
+    "pricing": {
+      "eyebrow": "Tarifs",
+      "heading": "Un prix par siège, pas par mauvaise surprise",
+      "description": "Chaque offre inclut la plateforme complète. Vous payez selon la taille de votre équipe et l'ampleur de votre charge — rien n'est verrouillé derrière un rendez-vous commercial, sauf ce qui en a réellement besoin.",
+      "billingPeriod": "Période de facturation",
+      "periods": {
+        "monthly": "Mensuel",
+        "yearly": "Annuel · 17 % d'économie"
+      },
+      "mostPopular": "Le plus choisi",
+      "custom": "Sur mesure",
+      "perSeat": "/ siège / mois",
+      "billedYearly": "Facturé annuellement — deux mois offerts.",
+      "plans": {
+        "starter": {
+          "name": "Starter",
+          "description": "Pour les premiers ingénieurs et les premiers vrais clients.",
+          "cta": "Commencer gratuitement",
+          "features": {
+            "members": "Jusqu'à 5 membres d'équipe",
+            "signin": "Connexion par e-mail et OAuth",
+            "runs": "10 k exécutions automatisées / mois",
+            "support": "Support communautaire"
+          }
+        },
+        "growth": {
+          "name": "Growth",
+          "description": "Pour les équipes dont les clients remarquent la moindre panne.",
+          "cta": "Démarrer l'essai de 14 jours",
+          "features": {
+            "members": "Membres d'équipe illimités",
+            "roles": "Rôles et permissions personnalisés",
+            "runs": "1 M d'exécutions automatisées / mois",
+            "realtime": "Notifications en temps réel et webhooks",
+            "audit": "Journal d'audit conservé 1 an",
+            "support": "Support prioritaire"
+          }
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "Pour les organisations avec un processus d'achat et un runbook.",
+          "cta": "Parler à un commercial",
+          "features": {
+            "sso": "SSO et provisionnement SCIM",
+            "residency": "Options de résidence des données",
+            "runs": "Exécutions illimitées, limites sur mesure",
+            "sla": "SLA de disponibilité à 99,99 %",
+            "engineer": "Ingénieur solutions dédié"
+          }
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "heading": "Les questions qu'on nous pose avant le premier échange",
+      "stillDeciding": "Vous hésitez encore ?",
+      "talkToHuman": "Parlez à un humain",
+      "weAnswer": "— nous répondons sous un jour ouvré.",
+      "items": {
+        "database": {
+          "question": "Dois-je déplacer ma base de données ?",
+          "answer": "Non. Nimbus se connecte à votre Postgres existant et génère les types depuis votre schéma. Vos données restent où elles sont, et vous conservez toutes les extensions et migrations dont vous dépendez déjà."
+        },
+        "permissions": {
+          "question": "Comment les permissions sont-elles réellement appliquées ?",
+          "answer": "Les permissions sont inscrites dans le jeton d'accès et appliquées par la sécurité au niveau des lignes dans la base. L'interface utilise les mêmes revendications pour décider quoi afficher, mais c'est la base qui dit non."
+        },
+        "revoke": {
+          "question": "Que se passe-t-il quand je révoque un accès ?",
+          "answer": "L'attribution est retirée et auditée immédiatement, et désactiver un utilisateur le déconnecte de toutes ses sessions au niveau global, sans attendre l'expiration d'un jeton."
+        },
+        "designSystem": {
+          "question": "Puis-je utiliser mon propre design system ?",
+          "answer": "Oui. Chaque surface lit un petit ensemble de jetons de design : un changement de palette ou de police se propage aux composants, aux graphiques et au mode sombre sans toucher un seul fichier de composant."
+        },
+        "freeTier": {
+          "question": "Existe-t-il une offre gratuite pour les projets personnels ?",
+          "answer": "Starter est gratuit jusqu'à cinq personnes et 10 000 exécutions automatisées par mois, sans carte bancaire. La plupart des projets personnels n'en sortent jamais."
+        },
+        "downtime": {
+          "question": "Comment gérez-vous les interruptions de service ?",
+          "answer": "Les offres Growth et Enterprise publient un taux de disponibilité glissant et une page d'état publique. Enterprise ajoute un SLA à 99,99 % avec avoirs et un contact nommé pendant les incidents."
+        }
+      }
+    }
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "heading": "Dites-nous ce que vous construisez",
+    "description": "Questions commerciales, revues de sécurité, plans de migration — un véritable ingénieur lit chaque message et répond sous un jour ouvré.",
+    "form": {
+      "title": "Envoyer un message",
+      "description": "Pas de chatbot, pas de campagne automatisée.",
+      "name": "Nom",
+      "email": "E-mail professionnel",
+      "company": "Entreprise",
+      "message": "Comment pouvons-nous vous aider ?",
+      "messagePlaceholder": "Nous migrons 40 ingénieurs depuis un outil d'administration interne…",
+      "send": "Envoyer le message",
+      "sent": "Merci — nous répondrons sous un jour ouvré."
+    },
+    "channels": {
+      "sales": {
+        "title": "Commercial",
+        "description": "Tarifs, achats et questionnaires de sécurité."
+      },
+      "support": {
+        "title": "Support",
+        "description": "Clients existants, 24/5 avec astreinte le week-end pour les incidents."
+      },
+      "office": {
+        "title": "Bureau",
+        "description": "Visites sur rendez-vous."
+      }
+    }
+  }
+}
