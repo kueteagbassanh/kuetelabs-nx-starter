@@ -1,0 +1,73 @@
+# Runs the three apps as containers. Values come from a root `.env`
+# (copy .env.example); Compose loads it automatically.
+#
+#   docker compose build
+#   docker compose up -d
+#
+# The local Supabase stack is NOT defined here — it has its own containers,
+# started with `npx supabase start`. Point SUPABASE_URL at it (see .env.example).
+
+name: kuetelabs-nx-starter
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: kuetelabs/api:local
+    ports:
+      - '${API_PORT:-3000}:3000'
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Server-side only. Reaches Supabase from inside the container, so a local
+      # stack on the host is host.docker.internal, not 127.0.0.1.
+      SUPABASE_URL: ${SUPABASE_URL_INTERNAL:-http://host.docker.internal:54321}
+      # All three are required by loadServerConfig() and validated at boot —
+      # the API exits immediately if any is missing. Nothing loads .env inside
+      # the container (no dotenv dependency), so they must be real env vars.
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      # Angular bakes config in at build time, so these are build args, not
+      # runtime env. Changing one requires a rebuild, not just a restart.
+      args:
+        APP_NAME: ${APP_NAME:-Web App}
+        API_URL: ${API_URL:-http://localhost:3000/api}
+        SUPABASE_URL: ${SUPABASE_URL:-http://127.0.0.1:54321}
+        SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+    image: kuetelabs/web:local
+    ports:
+      - '${WEB_PORT:-4000}:4000'
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      # Must list the host the app is served on, or Angular's SSRF check quietly
+      # drops to client-side rendering. Add your public hostname before deploying.
+      NG_ALLOWED_HOSTS: ${WEB_ALLOWED_HOSTS:-localhost,127.0.0.1}
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+      args:
+        API_URL: ${API_URL:-http://localhost:3000/api}
+        SUPABASE_URL: ${SUPABASE_URL:-http://127.0.0.1:54321}
+        SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+    image: kuetelabs/admin:local
+    ports:
+      - '${ADMIN_PORT:-4300}:80'
+    depends_on:
+      - api
+    restart: unless-stopped
