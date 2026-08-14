@@ -245,7 +245,48 @@ Two things to know when adding an app: register its entry stylesheet in `build.o
 
 ## Environments
 
-`apps/web/src/environments/environment.ts` reads `process.env['API_URL']` / `process.env['APP_NAME']` (see `.env.example`); `environment.prod.ts` is swapped in by `fileReplacements` in the production build configuration.
+Angular environment files hold **literals, not `process.env`** — the file is bundled into the
+browser, where `process` does not exist. `environment.prod.ts` is swapped in by `fileReplacements`
+in the production build configuration, so which file you get is decided purely by the Nx
+configuration you build (`production` vs `development`).
+
+Frontend config is therefore **baked in at build time**: `docker run -e API_URL=...` does nothing
+for a browser bundle. To build an image for a target environment, pass build args — the web and
+admin Dockerfiles run `tools/write-environment.mjs`, which rewrites the matching keys in
+`environment.prod.ts` before `nx build`. With no args set it is a no-op and the checked-in file is
+used as-is. See docs/ARCHITECTURE.md §12.
+
+`.env` is read only by `apps/api`, and only because **Nx loads it into the task environment** —
+there is no `dotenv` dependency and nothing calls `dotenv.config()`. Run `node main.js` in a
+container and `.env` is invisible, so `SUPABASE_URL`, `SUPABASE_ANON_KEY` and
+`SUPABASE_SERVICE_ROLE_KEY` must be passed as real environment variables. `loadServerConfig()`
+validates them at boot, so a missing one crashes the API on startup rather than on first request.
+
+## Docker
+
+`docker compose up -d --build` runs all three apps; see the `## Docker` section of README.md. One
+Dockerfile per app, each built from the **workspace root** as context
+(`docker build -f apps/web/Dockerfile .`).
+
+- **The `web` SSR output is self-contained** — express and `@angular/ssr` are bundled into
+  `server.mjs`, so its runtime stage copies `dist/apps/web` and installs nothing. Only Node builtins
+  stay external. Keep the `browser/` + `server/` sibling layout: `server.mjs` resolves static assets
+  at `../browser`.
+- **`web` must run with `NG_ALLOWED_HOSTS` set to the host it is served on.** Angular's SSRF check
+  rejects unlisted `Host` headers and *silently* degrades to client-side rendering — `/` drops from
+  ~147KB of rendered HTML to a ~14KB empty shell, with a 200 either way, so a healthcheck will not
+  catch it. `NG_TRUST_PROXY_HEADERS` is the matching knob for `X-Forwarded-*` behind a proxy.
+- **`api` installs from what `nx build api` generates.** webpack's `generatePackageJson: true`
+  writes `dist/apps/api/package.json` (exact versions for the 8 externals) *and* a pruned
+  `package-lock.json`; the runtime stage runs `npm ci --omit=dev` against that pair. Don't replace
+  it with a workspace install — `@angular-devkit/build-angular` sits in `dependencies`, so even
+  `--omit=dev` would drag the whole Angular toolchain into the image.
+- **Don't use the `api:prune` target here.** `prune-lockfile` and `copy-workspace-modules` require
+  an `apps/api/package.json` that this repo doesn't have, and fail with
+  `apps/api/package.json does not exist`. They're redundant with `generatePackageJson` anyway.
+- **`.npmrc` must be copied alongside `package.json`** in every deps stage — without
+  `legacy-peer-deps=true`, `npm ci` fails on `angular-chrts`'s stale Angular peer range.
+- `admin` is static output served by nginx with a SPA fallback (`apps/admin/nginx.conf`).
 
 ## TypeScript
 

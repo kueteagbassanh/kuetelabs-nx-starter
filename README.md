@@ -62,6 +62,67 @@ These targets are either [inferred automatically](https://nx.dev/concepts/inferr
 
 [More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
+## Docker
+
+One image per app, each built from the **workspace root** as the build context.
+
+```sh
+cp .env.example .env          # compose reads this automatically
+docker compose up -d --build  # web :4000, admin :4300, api :3000
+docker compose logs -f web
+docker compose down
+```
+
+Building a single image by hand — note the `-f` path and the trailing `.`:
+
+```sh
+docker build -f apps/web/Dockerfile -t kuetelabs/web .
+docker build -f apps/api/Dockerfile -t kuetelabs/api .
+docker build -f apps/admin/Dockerfile -t kuetelabs/admin .
+```
+
+| App | Runtime | Port | Notes |
+| --- | --- | --- | --- |
+| `web` | Node, `node server/server.mjs` | 4000 | SSR. Output is self-contained; no `node_modules` in the image. |
+| `admin` | nginx | 80 | Static SPA + fallback to `index.html` (`apps/admin/nginx.conf`). |
+| `api` | Node, `node main.js` | 3000 | Deps installed from the package.json + lockfile `nx build api` generates. |
+
+### Configuration: two different mechanisms
+
+**The Angular apps bake their config in at build time.** `environment.prod.ts` holds literals, not
+`process.env` — a browser bundle has no `process`. So `docker run -e API_URL=...` does nothing for
+`web`'s client bundle or for `admin`. Pass them as **build args** instead; the build stage runs
+`tools/write-environment.mjs`, which rewrites only the keys you supply:
+
+```sh
+docker build -f apps/web/Dockerfile \
+  --build-arg API_URL=https://api.example.com/api \
+  --build-arg SUPABASE_URL=https://xyz.supabase.co \
+  --build-arg SUPABASE_ANON_KEY=eyJ... \
+  -t kuetelabs/web .
+```
+
+With no build args the checked-in `environment.prod.ts` is used unchanged. Changing one of these
+values requires a **rebuild**, not a restart.
+
+**The API reads real environment variables at runtime.** Nothing loads `.env` inside a container —
+there is no `dotenv` dependency; locally `.env` works only because Nx injects it into the task.
+`loadServerConfig()` validates at boot, so the API exits immediately if `SUPABASE_URL`,
+`SUPABASE_ANON_KEY` or `SUPABASE_SERVICE_ROLE_KEY` is missing.
+
+### Gotchas worth knowing
+
+- **`NG_ALLOWED_HOSTS` is required for SSR to actually run.** Angular's SSRF protection rejects a
+  `Host` header it doesn't recognise and *silently* falls back to client-side rendering — you still
+  get a 200, but `/` returns a ~14KB empty shell instead of ~147KB of rendered HTML. Set it to your
+  public hostname (`WEB_ALLOWED_HOSTS` in `.env`); `*` disables the check. Behind a reverse proxy,
+  `NG_TRUST_PROXY_HEADERS` does the same job for `X-Forwarded-*`.
+- **Supabase is not part of this compose file.** It has its own containers (`npx supabase start`).
+  `SUPABASE_URL` is the URL the *browser* uses; the API container needs `SUPABASE_URL_INTERNAL`,
+  because `127.0.0.1` inside a container is the container itself.
+- **Docker permission denied?** Same fix the Local Supabase section documents:
+  `sudo usermod -aG docker $USER`, then log out and back in.
+
 ## Add new projects
 
 While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.

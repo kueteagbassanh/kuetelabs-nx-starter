@@ -1,0 +1,49 @@
+# Build context excludes — keep the context small and the layer cache stable.
+
+# Dependencies (reinstalled inside the image from the lockfile)
+node_modules
+**/node_modules
+
+# Build output
+dist
+tmp
+out-tsc
+.angular
+
+# Nx local caches
+.nx/cache
+.nx/workspace-data
+.nx/polygraph
+
+# VCS & agent/editor state
+.git
+.gitignore
+.github
+.idea
+.vscode
+.claude
+.codex
+.opencode
+.agents
+
+# Local env — secrets are injected at runtime, never baked into an image
+.env
+.env.local
+.env.*.local
+
+# Screenshots & coverage (spec files stay: tsconfig project references resolve them)
+coverage
+__screenshots__
+.screenshots
+
+# Local Supabase stack
+supabase/.branches
+supabase/.temp
+
+# Docs & docker files themselves
+docs
+*.md
+Dockerfile
+**/Dockerfile
+.dockerignore
+docker-compose*.yml
