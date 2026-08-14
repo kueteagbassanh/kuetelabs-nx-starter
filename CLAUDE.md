@@ -278,9 +278,14 @@ Dockerfile per app, each built from the **workspace root** as context
   catch it. `NG_TRUST_PROXY_HEADERS` is the matching knob for `X-Forwarded-*` behind a proxy.
 - **`api` installs from what `nx build api` generates.** webpack's `generatePackageJson: true`
   writes `dist/apps/api/package.json` (exact versions for the 8 externals) *and* a pruned
-  `package-lock.json`; the runtime stage runs `npm ci --omit=dev` against that pair. Don't replace
-  it with a workspace install — `@angular-devkit/build-angular` sits in `dependencies`, so even
-  `--omit=dev` would drag the whole Angular toolchain into the image.
+  `package-lock.json`; the runtime stage installs from that pair. Don't replace it with a workspace
+  install — `@angular-devkit/build-angular` sits in `dependencies`, so even `--omit=dev` would drag
+  the whole Angular toolchain into the image.
+- **That install is `npm install --omit=dev`, not `npm ci`, on purpose.** The two files webpack
+  generates drift from each other (npm reports `Missing: content-type@1.0.5 from lock file`) and
+  `npm ci` refuses to install when a lockfile and its package.json disagree. Direct dependencies are
+  pinned to exact versions there, so only transitives can move. The workspace deps stage still uses
+  `npm ci` — that lockfile is authoritative.
 - **Don't use the `api:prune` target here.** `prune-lockfile` and `copy-workspace-modules` require
   an `apps/api/package.json` that this repo doesn't have, and fail with
   `apps/api/package.json does not exist`. They're redundant with `generatePackageJson` anyway.
