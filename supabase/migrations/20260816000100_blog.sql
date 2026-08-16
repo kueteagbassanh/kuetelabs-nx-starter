@@ -104,6 +104,15 @@ create trigger blog_posts_stamp_published_at
 
 alter table public.blog_posts enable row level security;
 
+-- Privileges and policies are two different gates, and a policy grants nothing on
+-- its own: without this, every client read fails with "permission denied for table
+-- blog_posts" before any policy is consulted. The Supabase CLI does not hand these
+-- out by default.
+--
+-- SELECT only, and never for the write verbs — the API holds service_role for those,
+-- so even a policy added here by mistake could not turn into a client write.
+grant select on public.blog_posts to anon, authenticated;
+
 -- The public feed. `anon` is included on purpose: the marketing site renders it
 -- for logged-out visitors, and SSR uses the anon key too.
 --
