@@ -37,8 +37,10 @@ interface RevenueRow extends Record<string, unknown> {
       <div class="grid gap-4 md:grid-cols-2">
         <section hlmCard>
           <div hlmCardHeader>
-            <h3 hlmCardTitle>Sessions</h3>
-            <p hlmCardDescription>Desktop and mobile sessions, stacked, last six months.</p>
+            <h3 hlmCardTitle class="leading-none font-semibold">Sessions</h3>
+            <p hlmCardDescription>
+              Desktop and mobile sessions, stacked, last six months.
+            </p>
           </div>
           <div hlmCardContent>
             <lib-area-chart
@@ -54,7 +56,9 @@ interface RevenueRow extends Record<string, unknown> {
         <section hlmCard>
           <div hlmCardHeader>
             <h3 hlmCardTitle>Session trend</h3>
-            <p hlmCardDescription>The same series unstacked, to compare shape over time.</p>
+            <p hlmCardDescription>
+              The same series unstacked, to compare shape over time.
+            </p>
           </div>
           <div hlmCardContent>
             <lib-line-chart
