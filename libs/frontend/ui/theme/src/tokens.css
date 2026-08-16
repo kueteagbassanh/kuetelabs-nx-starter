@@ -54,10 +54,12 @@
    --tracking-normal: 0em;
    --spacing: 0.25rem;
 
-   /* Chart palette — shadcn `--chart-N` contract, re-stepped so adjacent slots stay
-   distinguishable under protan/deutan CVD (stock shadcn chart-4/chart-5 differ by
-   ΔE 7.4 to normal vision, 5.6 under deutan, and chart-3 falls under the chroma
-   floor). Slots 1-2 are shadcn's values verbatim. Assign in order, never cycle. */
+   /* Chart palette — shadcn's `--chart-N` contract, but a single-hue sequential
+   ramp rather than a categorical set: one blue (hue 252-266) stepped by
+   lightness from L 0.81 down to L 0.42. Slots are therefore told apart by
+   lightness alone, which makes the order meaningful — assign in order, never
+   cycle, and keep the series count low: slots 2-5 sit only 0.06-0.07 L apart.
+   See docs/ARCHITECTURE.md §7a before changing a value. */
    --chart-1: oklch(0.8100 0.1000 252);
    --chart-2: oklch(0.6200 0.1900 260);
    --chart-3: oklch(0.5500 0.2200 263);
@@ -116,8 +118,10 @@
    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 
-   /* Chart palette — dark steps, selected for the dark surface (OKLCH L 0.48-0.67),
-   not an automatic flip of the light values. */
+   /* Chart palette — the same five steps as the light block; this ramp is not
+   re-stepped for the dark surface. It runs light-to-dark, so the later slots
+   are the ones nearest the L 0.20 background — --chart-5 (L 0.42) has the
+   least separation from it. */
    --chart-1: oklch(0.8100 0.1000 252);
    --chart-2: oklch(0.6200 0.1900 260);
    --chart-3: oklch(0.5500 0.2200 263);
