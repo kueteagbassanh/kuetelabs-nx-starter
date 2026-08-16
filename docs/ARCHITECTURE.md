@@ -727,6 +727,92 @@ apps can all reach it. Full notes in that lib's README; the decisions worth know
   In section components, ids stay in the code and the words live in JSON — don't store an array of
   sentences, since Transloco flattens nested objects and the array is then not retrievable.
 
+## 7g. Blog
+
+A public, server-rendered feed on the marketing site, and an authoring surface behind the dashboard.
+
+```
+anon / authenticated ──select (RLS: published only)──► blog_posts ──► BlogStore ──► /blog, /blog/:slug
+                                                          ▲
+author ──► BlogAdminStore ──► API (blog.write / blog.publish) ──service_role──┘
+```
+
+**Reading needs no API.** Published posts are readable by `anon`, so the browser — and the SSR
+render, which uses the same anon key — talks to Supabase directly. That is the §2 rule applied
+again: the API earns its place only where a secret or a cross-user concern exists, and a public
+article is neither.
+
+**Writing has no client policy at all.** `blog_posts` has no insert, update, or delete policy, so
+authoring goes through `libs/backend/blog` with the service_role key, exactly like `user_roles` and
+`notifications`. The controller re-checks the permission on the verified JWT; the Angular guards
+only decide what renders.
+
+**Publishing is a separate permission from writing.** `blog.write` edits drafts, `blog.publish` puts
+one in front of readers, and `blog.read` sees drafts in the authoring list. Because `status` is an
+ordinary field on create and update, the controller also rejects a payload carrying
+`status: 'published'` from someone without `blog.publish` — otherwise the dedicated `/publish` route
+would be trivial to route around. Both cases are pinned by tests.
+
+### The public feed filters on status even though RLS does
+
+Two select policies apply to `blog_posts`: the public one (`status = 'published' and published_at <=
+now()`), and a broader authoring one for holders of `blog.read`. **Postgres OR-es policies together**,
+so an editor who is signed in matches both — and RLS alone would then put drafts and scheduled posts
+straight into the public feed. `BlogStore` therefore repeats the status filter in the query. It is
+not redundant; removing it is a content leak that only appears when an editor visits the site.
+
+### Scheduling is a date, not a flag
+
+`published_at` in the future means the row is `published` but no reader can see it yet, because the
+public policy compares against `now()`. A `before insert or update` trigger stamps the date the
+first time a post is published and leaves it alone afterwards, so re-publishing an archived post
+does not move the date under a permalink that already cites it.
+
+### Reading time is a generated column
+
+The feed selects summaries without `content` — nine articles should not be shipped to draw nine
+cards. That leaves nothing to measure, so `reading_minutes` is `generated always as ... stored` in
+Postgres (200 wpm, floor of one). The list and the article therefore always agree, which two
+independent computations would not.
+
+### Rendering, and the markdown escape rule
+
+Post bodies are markdown, rendered by `libs/frontend/features/blog/feature/src/lib/markdown.ts` —
+a small renderer rather than a dependency, because the workspace ships no markdown library.
+
+**The rule is escape-first.** Every character is HTML-escaped before any markdown transform runs, so
+authored HTML renders as text and the tags the renderer emits are the only ones that can reach the
+DOM. Link hrefs are restricted to `http(s)`, `mailto:` and single-slash in-app paths, which is what
+turns `[x](javascript:…)` into plain text. Angular's sanitizer on `[innerHTML]` is a second layer,
+not the only one. There are tests for each of these; keep them if the renderer is ever swapped for
+`marked`.
+
+### SSR
+
+`/blog` and `/blog/**` are `RenderMode.Server`, not prerendered. Posts live in the database, so a
+build-time render would freeze the feed as it stood when the image was built and a new post would
+never appear.
+
+Server rendering only helps if the render waits for the rows. supabase-js uses its own `fetch` and
+registers nothing with Angular, so `BlogStore` holds an **`PendingTasks`** task open around each
+query — without it the server would serialize an empty feed and the page would fill in only after
+hydration, which is precisely what a crawler never sees. The article page also sets its title and
+meta description from the row inside an effect, so they land in the served HTML.
+
+The authoring routes under `dashboard/blog` are `RenderMode.Client`: they sit behind
+`authenticatedGuard`, and prerendering them would ship a logged-out render, the same trap as
+`auth/**`.
+
+### Degrading without configuration
+
+The blog is on the public site, so a freshly cloned starter has to reach it. `BlogStore` resolves
+the Supabase client only when `isSupabaseConfigured(...)` says there is one — injecting
+`SUPABASE_CLIENT` unconfigured throws by design — and every method falls back to an empty feed.
+`/blog` then renders its heading and empty state instead of a stack trace.
+
+
+---
+
 ## 8. Shared contracts and generated types
 
 ```sh

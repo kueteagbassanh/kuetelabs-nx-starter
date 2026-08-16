@@ -216,6 +216,9 @@
       "@kuetelabs/frontend/features/user-management/feature": [
         "./libs/frontend/features/user-management/feature/src/index.ts"
       ],
+      "@kuetelabs/backend/blog": [
+        "./libs/backend/blog/feature/src/index.ts"
+      ],
       "@kuetelabs/backend/core": [
         "./libs/backend/core/src/index.ts"
       ],
@@ -227,6 +230,12 @@
       ],
       "@kuetelabs/frontend/ui/toast": [
         "./libs/frontend/ui/toast/src/index.ts"
+      ],
+      "@kuetelabs/frontend/features/blog/data-access": [
+        "./libs/frontend/features/blog/data-access/src/index.ts"
+      ],
+      "@kuetelabs/frontend/features/blog/feature": [
+        "./libs/frontend/features/blog/feature/src/index.ts"
       ],
       "@kuetelabs/frontend/features/notification/data-access": [
         "./libs/frontend/features/notification/data-access/src/index.ts"

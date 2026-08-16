@@ -1,0 +1,9 @@
+{
+  "name": "backend-blog",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/blog/feature/src",
+  "projectType": "library",
+  "tags": ["platform:backend", "type:feature", "scope:blog"],
+  "// targets": "to see all targets run: nx show project backend-blog --web",
+  "targets": {}
+}

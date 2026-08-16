@@ -29,6 +29,7 @@ export const landingConfig: LandingConfig = {
     { label: 'landing.nav.customers', url: '/', fragment: 'customers' },
     { label: 'landing.nav.pricing', url: '/', fragment: 'pricing' },
     { label: 'landing.nav.faq', url: '/', fragment: 'faq' },
+    { label: 'landing.nav.blog', url: '/blog' },
     { label: 'landing.nav.contact', url: '/contact' },
   ],
 

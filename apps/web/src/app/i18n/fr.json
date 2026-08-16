@@ -9,6 +9,7 @@
       "customers": "Clients",
       "pricing": "Tarifs",
       "faq": "FAQ",
+      "blog": "Blog",
       "contact": "Contact"
     },
     "actions": {
@@ -279,6 +280,26 @@
         "title": "Bureau",
         "description": "Visites sur rendez-vous."
       }
+    }
+  },
+  "blog": {
+    "eyebrow": "Blog",
+    "readingTime": "{{minutes}} min de lecture",
+    "list": {
+      "heading": "Les notes de l'équipe",
+      "description": "Nouveautés produit, notes d'ingénierie et, parfois, une opinion.",
+      "searchLabel": "Rechercher des articles",
+      "searchPlaceholder": "Rechercher des articles…",
+      "allTags": "Tous",
+      "empty": "Rien de publié pour l'instant. Revenez bientôt.",
+      "loadMore": "Charger plus",
+      "loading": "Chargement…"
+    },
+    "post": {
+      "back": "← Tous les articles",
+      "notFoundTitle": "Cet article n'existe pas",
+      "notFoundBody": "Il a peut-être été dépublié, ou le lien est erroné.",
+      "notFoundAction": "Retour au blog"
     }
   }
 }

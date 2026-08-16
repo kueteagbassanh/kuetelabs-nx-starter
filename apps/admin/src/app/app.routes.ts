@@ -45,6 +45,11 @@ export const appRoutes: Route[] = [
         children: notificationRoutes,
       },
       {
+        path: 'blog',
+        loadChildren: () =>
+          import('@kuetelabs/frontend/features/blog/feature').then((m) => m.blogAdminRoutes),
+      },
+      {
         // AUTH_NAVIGATION.forbiddenPath. Inside the shell on purpose: a signed-in
         // user who lacks one permission keeps the navigation they can still use.
         path: 'forbidden',

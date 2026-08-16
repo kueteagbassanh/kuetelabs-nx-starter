@@ -9,6 +9,7 @@
       "customers": "Customers",
       "pricing": "Pricing",
       "faq": "FAQ",
+      "blog": "Blog",
       "contact": "Contact"
     },
     "actions": {
@@ -279,6 +280,26 @@
         "title": "Office",
         "description": "Visits by appointment."
       }
+    }
+  },
+  "blog": {
+    "eyebrow": "Blog",
+    "readingTime": "{{minutes}} min read",
+    "list": {
+      "heading": "Notes from the team",
+      "description": "Product updates, engineering notes, and the occasional opinion.",
+      "searchLabel": "Search posts",
+      "searchPlaceholder": "Search posts…",
+      "allTags": "All",
+      "empty": "Nothing published yet. Check back soon.",
+      "loadMore": "Load more",
+      "loading": "Loading…"
+    },
+    "post": {
+      "back": "← All posts",
+      "notFoundTitle": "This post does not exist",
+      "notFoundBody": "It may have been unpublished, or the link may be wrong.",
+      "notFoundAction": "Back to the blog"
     }
   }
 }
