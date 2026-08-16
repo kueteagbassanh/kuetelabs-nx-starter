@@ -462,6 +462,24 @@ ends live sessions rather than waiting them out. For anything where staleness is
 
 ### Where enforcement lives
 
+**Privileges are a second gate, and they are not automatic.** A policy says which rows a role may
+touch; it grants no access on its own, and the Supabase CLI does not hand out table privileges. A
+table with correct RLS and no `grant` fails every client read with `permission denied for table ...`
+before a policy is evaluated — which is exactly how `profiles`, `user_roles`, `role_permissions`,
+`role_audit_log` and `notifications` shipped until `20260816000200_table_grants.sql`.
+
+When adding a table, grant the narrowest set that makes its policies usable:
+
+* `authenticated` only — `anon` gets nothing unless the rows really are public (the blog is the one
+  case here).
+* No INSERT where the API owns writes with service_role. Escalation should stay inexpressible from a
+  client rather than merely unpolicied.
+* Column-level UPDATE wherever the policy restricts the row but the intent is a few fields. Both
+  `profiles_update_self` ("display fields") and the notifications update policy ("only flip
+  `read_at`") describe column limits their policies never enforced; the grant is what makes those
+  comments true.
+
+
 Three layers, and only two of them are security:
 
 | Layer | Mechanism | Is it a security boundary? |
