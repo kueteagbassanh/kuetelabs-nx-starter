@@ -56,12 +56,12 @@ Always import across libs via these aliases (never relative paths into another l
 
 `eslint.config.mjs` enforces `@nx/enforce-module-boundaries` with `enforceBuildableLibDependency: true` and a layered tag system:
 
-| sourceTag | may depend on |
-| --- | --- |
-| `type:app` | `type:layout`, `type:feature`, `type:data-access`, `type:ui`, `type:util` |
-| `type:layout` | `type:feature`, `type:data-access`, `type:ui`, `type:util` |
-| `type:feature` | `type:data-access`, `type:ui`, `type:util` |
-| `type:ui` | `type:ui`, `type:util` |
+| sourceTag      | may depend on                                                             |
+| -------------- | ------------------------------------------------------------------------- |
+| `type:app`     | `type:layout`, `type:feature`, `type:data-access`, `type:ui`, `type:util` |
+| `type:layout`  | `type:feature`, `type:data-access`, `type:ui`, `type:util`                |
+| `type:feature` | `type:data-access`, `type:ui`, `type:util`                                |
+| `type:ui`      | `type:ui`, `type:util`                                                    |
 
 New libs must carry a `type:*` tag in `project.json` or they will be unusable from tagged consumers. `platform:*` tags (`platform:web`, `platform:frontend`) exist on projects, but the platform-isolation `depConstraints` block is still an empty placeholder.
 
@@ -85,14 +85,14 @@ Component conventions (see `libs/frontend/ui/components/button`):
 
 - `withState` for shape, `withComputed` for derived values, `withMethods` for behavior, `withHooks` for lifecycle (`onInit` runs in an injection context — take `DestroyRef` there for cleanup).
 - **`withEntities` for collections.** `UsersStore` holds users as entities, so a role toggle is `updateEntity(...)` — an O(1) patch instead of a list rebuild. Consumers read `store.entities()`.
-- **`rxMethod` for anything with RxJS semantics** — debounce, cancellation, retry. The user search uses `debounceTime` + `distinctUntilChanged` + `switchMap`, so typing issues one request and a slow earlier response cannot overwrite a newer one. Keep `catchError` *inside* `switchMap` or the outer stream dies on the first failure.
+- **`rxMethod` for anything with RxJS semantics** — debounce, cancellation, retry. The user search uses `debounceTime` + `distinctUntilChanged` + `switchMap`, so typing issues one request and a slow earlier response cannot overwrite a newer one. Keep `catchError` _inside_ `switchMap` or the outer stream dies on the first failure.
 - Mutate only through `patchState`; never assign to a state signal directly.
 
 ## Auth pages
 
 `libs/frontend/features/auth/feature` holds login, signup, forgot/reset password, the OAuth + email callback, and a setup page; `libs/frontend/layouts/auth-layout` holds only the centered chrome. Apps compose them: `{ path: 'auth', component: AuthContainer, children: authRoutes }` plus `provideAuthPages({ ... })` for app name, post-login redirect, `signupEnabled`, and OAuth providers. `admin` is invite-only, `web` allows signup — same components, different config.
 
-- **Never prerender `auth/**`** — `RenderMode.Client` in `app.routes.server.ts`. A prerendered auth page is a logged-out shell for every visitor, and the Supabase session lives in `localStorage`.
+- **Never prerender `auth/**`** — `RenderMode.Client`in`app.routes.server.ts`. A prerendered auth page is a logged-out shell for every visitor, and the Supabase session lives in `localStorage`.
 - The callback route handles OAuth, email confirmation, and recovery; recovery is forwarded to `reset-password`.
 - Forgot-password and signup deliberately give identical responses whether or not the account exists — do not "improve" those messages.
 - Routes are behind `supabaseConfiguredGuard()`, which diverts to `/auth/setup` when no anon key is set.
@@ -165,7 +165,7 @@ from `apps/web/src/app/i18n/`. Full model in `docs/ARCHITECTURE.md` §7f and tha
   re-exports `TranslocoDirective`, `TranslocoPipe`, `TranslocoService` and `translateSignal`.
 - **The locale lives in a cookie, not `localStorage`.** SSR and the hydrating client must resolve the
   same locale independently or the first render is thrown away, and the server cannot see
-  `localStorage`. `resolveInitialLocale()` reads *only* the cookie on both platforms.
+  `localStorage`. `resolveInitialLocale()` reads _only_ the cookie on both platforms.
 - **Never read `navigator.language` before the first render.** The server cannot produce that answer.
   `LocaleStore`'s `onInit` adopts it after hydration, only when no cookie exists, then writes one.
 - **The cookie read is platform-gated because `document.cookie` throws during prerendering**
@@ -306,7 +306,7 @@ Dockerfile per app, each built from the **workspace root** as context
   stay external. Keep the `browser/` + `server/` sibling layout: `server.mjs` resolves static assets
   at `../browser`.
 - **`web` must run with `NG_ALLOWED_HOSTS` set to the host it is served on.** Angular's SSRF check
-  rejects unlisted `Host` headers and *silently* degrades to client-side rendering — `/` drops from
+  rejects unlisted `Host` headers and _silently_ degrades to client-side rendering — `/` drops from
   ~147KB of rendered HTML to a ~14KB empty shell, with a 200 either way, so a healthcheck will not
   catch it. `NG_TRUST_PROXY_HEADERS` is the matching knob for `X-Forwarded-*` behind a proxy.
 - **`api` installs from what `nx build api` generates.** webpack's `generatePackageJson: true`
@@ -333,7 +333,7 @@ Strict everywhere: per-project tsconfigs enable `strict`, `noImplicitOverride`, 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 
-# General Guidelines for working with Nx
+## General Guidelines for working with Nx
 
 - For navigating/exploring the workspace, invoke the `nx-workspace` skill first - it has patterns for querying projects, targets, and dependencies
 - When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
