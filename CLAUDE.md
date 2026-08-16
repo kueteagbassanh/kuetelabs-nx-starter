@@ -209,11 +209,44 @@ In-app center + toasts. `notifications` has no client insert policy — the API 
 - The bell mounts via `DASHBOARD_HEADER_ACTIONS`, so the shared layout stays free of feature deps.
 - **Anything that touches Supabase at construction must be gated on `isSupabaseConfigured(...)`** — see `apps/admin/src/app/app.config.ts`. Mounting the bell without an anon key takes the whole shell down.
 
+## Blog
+
+Public feed at `/blog` on the marketing site, authoring behind the dashboard at `/dashboard/blog`
+(`/blog` in `admin`). Reading goes straight to Supabase under RLS; writing goes through
+`libs/backend/blog` with the service_role key. Full model in `docs/ARCHITECTURE.md` §7g.
+
+- **The public feed filters on `status` in the query, not only through RLS.** Two select policies
+  apply to `blog_posts` and Postgres OR-es them, so an editor holding `blog.read` matches the
+  broader one — RLS alone would put drafts on the public site the moment an editor signs in. That
+  filter in `BlogStore` is a content boundary, not a redundancy.
+- **`blog_posts` has no client write policy.** Authoring is API-only, and `blog.publish` is a
+  separate permission from `blog.write`. Because `status` is an ordinary field on create and update,
+  `BlogController` also rejects `status: 'published'` from a caller without `blog.publish` — dropping
+  that check makes the `/publish` route decorative.
+- **`published_at` in the future is a scheduled post**, hidden by the same policy until the clock
+  passes it. A trigger stamps the date on first publish and never moves it again.
+- **`reading_minutes` is a generated column.** The feed selects summaries without `content`, so
+  there is nothing to measure client-side; deriving it twice would let the card and the article
+  disagree.
+- **`/blog` and `/blog/**` are `RenderMode.Server`, never prerendered** — posts come from the
+  database, and a prerender freezes the feed at build time. Server rendering only helps because
+  `BlogStore` holds an Angular `PendingTasks` task open around each query: supabase-js registers
+  nothing with Angular, so without it SSR serializes an empty feed and fills it in after hydration,
+  with no error to notice.
+- **`markdown.ts` escapes before it transforms.** Authored HTML renders as text, hrefs are limited to
+  `http(s)`, `mailto:` and single-slash paths, and Angular's sanitizer is the second layer rather
+  than the only one. Keep `markdown.spec.ts` if that renderer is ever swapped for `marked`.
+- Public pages use `injectCopyResolver()` with literal fallbacks (keys in `apps/web/src/app/i18n/`);
+  the authoring screens are untranslated, like the other back-office features.
+- Adding a permission is a migration plus `supabase gen types` — the blog ones were added in their
+  own migration because Postgres refuses to use a new enum value in the transaction that added it.
+
 ## Auth, roles, permissions
 
 Global roles; permissions ride in the JWT (stamped by `custom_access_token_hook`); every mutation goes through the API with the service_role key. Full model in `docs/ARCHITECTURE.md` §7b — read it before touching a policy or adding a permission.
 
 - **`user_roles` has no client write policy.** Grants happen only in `libs/backend/user-management`, which audits every change. Do not add a write policy to make something convenient.
+- **A policy grants nothing — every new table needs an explicit `grant`.** Privileges and policies are separate gates, and the Supabase CLI hands out no table privileges, so a table with perfect RLS still fails every client read with `permission denied` before a policy is consulted. Grant the narrowest set that makes the policies usable: `authenticated` only (never `anon`, unless the data really is public), no INSERT where the API owns writes, and column-level UPDATE where the policy comment promises only certain fields — `supabase/migrations/20260816000200_table_grants.sql` is the pattern.
 - **Enforcement is RLS + the API.** `permissionGuard` and `*libHasPermission` decide what renders; they are not security. Never let a check exist only in Angular.
 - **Claims are as fresh as the token.** A revoked permission survives until refresh — `AuthStore.refreshClaims()` forces it, and disabling a user calls `auth.admin.signOut(id, 'global')`.
 - Roles/permissions flow from the DB enums → `libs/shared/database-types` → `APP_ROLES`/`APP_PERMISSIONS` in `libs/shared/domain`. Adding one is a migration plus `supabase gen types`; everything that needs updating then fails to compile.

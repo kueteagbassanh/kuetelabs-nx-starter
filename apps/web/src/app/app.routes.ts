@@ -57,6 +57,17 @@ export const appRoutes: Route[] = [
         path: 'contact',
         loadComponent: () => import('./pages/contact').then((m) => m.Contact),
       },
+      {
+        // Public, and server-rendered rather than prerendered — see
+        // app.routes.server.ts. Posts come from the database, so a build-time
+        // render would freeze whatever was published the day the image was built.
+        //
+        // loadChildren rather than a static import: nothing in the initial bundle
+        // references the blog, and a static one would pull every page of it in.
+        path: 'blog',
+        loadChildren: () =>
+          import('@kuetelabs/frontend/features/blog/feature').then((m) => m.blogRoutes),
+      },
     ],
   },
   {
@@ -68,6 +79,13 @@ export const appRoutes: Route[] = [
       {
         path: '',
         loadComponent: () => import('./pages/overview').then((m) => m.Overview),
+      },
+      {
+        // Authoring. The public feed above is a different surface entirely: this
+        // one is behind the session guard and a blog.* permission per route.
+        path: 'blog',
+        loadChildren: () =>
+          import('@kuetelabs/frontend/features/blog/feature').then((m) => m.blogAdminRoutes),
       },
       {
         // AUTH_NAVIGATION.forbiddenPath. Inside the shell on purpose: a signed-in

@@ -34,6 +34,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          content: string
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          published_at: string | null
+          reading_minutes: number
+          search_vector: unknown | null
+          slug: string
+          status: Database["public"]["Enums"]["blog_post_status"]
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          content: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          reading_minutes?: never
+          search_vector?: never
+          slug: string
+          status?: Database["public"]["Enums"]["blog_post_status"]
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          reading_minutes?: never
+          search_vector?: never
+          slug?: string
+          status?: Database["public"]["Enums"]["blog_post_status"]
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           action_url: string | null
@@ -194,7 +245,11 @@ export type Database = {
         | "roles.read"
         | "roles.assign"
         | "audit.read"
+        | "blog.read"
+        | "blog.write"
+        | "blog.publish"
       app_role: "admin" | "manager" | "support" | "member"
+      blog_post_status: "draft" | "published" | "archived"
       notification_type:
         | "role.granted"
         | "role.revoked"

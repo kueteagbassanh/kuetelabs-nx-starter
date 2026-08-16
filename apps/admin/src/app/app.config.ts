@@ -5,12 +5,14 @@ import {
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { isSupabaseConfigured, provideSupabase } from '@kuetelabs/frontend/data-access/supabase';
+import { BLOG_API_URL } from '@kuetelabs/frontend/features/blog/data-access';
 import { USER_ADMIN_API_URL } from '@kuetelabs/frontend/features/user-management/data-access';
 import { environment } from '../environments/environment';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideBell,
   lucideCreditCard,
+  lucideNewspaper,
   lucideDatabase,
   lucideFlag,
   lucideGauge,
@@ -54,6 +56,7 @@ const adminMenu: SidebarConfig = {
         { label: 'Users', url: '/users', icon: 'lucideUsers', badge: '1.2k' },
         { label: 'Roles', url: '/roles', icon: 'lucideShieldCheck' },
         { label: 'Audit log', url: '/audit', icon: 'lucideScrollText' },
+        { label: 'Blog', url: '/blog', icon: 'lucideNewspaper' },
         // Hidden until Supabase is configured — the page needs a backend.
         ...(supabaseReady
           ? [{ label: 'Notifications', url: '/notifications', icon: 'lucideBell' }]
@@ -101,6 +104,8 @@ export const appConfig: ApplicationConfig = {
       loginPath: '/auth/login',
     }),
     { provide: USER_ADMIN_API_URL, useValue: environment.apiUrl },
+    // Authoring writes go through the API: blog_posts has no client write policy.
+    { provide: BLOG_API_URL, useValue: environment.apiUrl },
     // Icons provided here merge with the layout's own set, so each app brings
     // the icons its navigation needs without touching the shared layout lib.
     provideIcons({
@@ -109,6 +114,7 @@ export const appConfig: ApplicationConfig = {
       lucideUsers,
       lucideShieldCheck,
       lucideScrollText,
+      lucideNewspaper,
       lucideFlag,
       lucideCreditCard,
       lucideDatabase,

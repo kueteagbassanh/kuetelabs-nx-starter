@@ -19,6 +19,9 @@ export const APP_PERMISSIONS = [
   'roles.read',
   'roles.assign',
   'audit.read',
+  'blog.read',
+  'blog.write',
+  'blog.publish',
 ] as const satisfies readonly AppPermission[];
 
 export const appRoleSchema = z.enum(APP_ROLES);

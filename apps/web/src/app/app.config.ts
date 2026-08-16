@@ -18,6 +18,7 @@ import {
   provideSupabase,
 } from '@kuetelabs/frontend/data-access/supabase';
 import { provideAuthPages } from '@kuetelabs/frontend/features/auth/feature';
+import { BLOG_API_URL } from '@kuetelabs/frontend/features/blog/data-access';
 import { provideErrorPages } from '@kuetelabs/frontend/layouts/error-layout';
 import { provideHlmSidebarConfig } from '@kuetelabs/frontend/ui/components/sidebar';
 import { LanguageSwitcher, provideI18n } from '@kuetelabs/frontend/ui/i18n';
@@ -233,6 +234,9 @@ export const appConfig: ApplicationConfig = {
         afterLoginPath: '/',
       },
     },
+    // Where the authoring screens send their writes. Reading the blog needs none of
+    // this: published posts come straight from Supabase under RLS.
+    { provide: BLOG_API_URL, useValue: environment.apiUrl },
     // Copy and destinations for every screen under /error, plus the app-level 404.
     provideErrorPages({
       appName: environment.appName,
