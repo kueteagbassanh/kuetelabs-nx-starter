@@ -5,6 +5,7 @@ import {
   PermissionsGuard,
   RequirePermissions,
   SupabaseAuthGuard,
+  ZodValidationPipe,
 } from '@kuetelabs/backend/core';
 import {
   type GrantRoleDto,
@@ -18,7 +19,6 @@ import {
   setUserDisabledSchema,
 } from '@kuetelabs/shared/domain';
 import { UserManagementService } from './user-management.service';
-import { ZodValidationPipe } from './zod-validation.pipe';
 
 /**
  * Admin surface for user and role management.
